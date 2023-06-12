@@ -140,7 +140,7 @@ class Options
                         'multiple' => 1
                     ])
                     ->addText('otomaties_wc_datepicker_' . $key . '_administration_label', [
-                        'label' => __('Administration abel', 'otomaties-woocommerce-datepicker'),
+                        'label' => __('Administration label', 'otomaties-woocommerce-datepicker'),
                         'instructions' => __('This will displayed in on the thankyou-page, e-mails and in the WooCommere backend', 'otomaties-woocommerce-datepicker'),
                         'default_value' => sprintf(__('%s date', 'otomaties-woocommerce-datepicker'), $label),
                     ])

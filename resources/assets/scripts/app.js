@@ -9,6 +9,7 @@ class Datepicker {
 	options() {
 		const defaultOptions = {
 			firstDayOfWeek: 1,
+			locale: 'fr',
 		};
 
 		return Object.assign(defaultOptions, datepickerArgs);
@@ -23,25 +24,32 @@ class Datepicker {
 
 	initFlatpickr() {
 		const datepicker = this;
-		flatpickr(this.el, {
-			onMonthChange: function(selectedDates, dateStr, instance) {
-				datepicker.setEnabledDates(instance);
-			},
-			onYearChange: function(selectedDates, dateStr, instance) {
-				datepicker.setEnabledDates(instance);
-			},
-			onReady: function(selectedDates, dateStr, instance) {
-				datepicker.setEnabledDates(instance);
-			},
-			enable: [function (date) {
-				false;
-			}],
-			minDate: datepicker.options().minDate,
-			inline: true,
-			locale: {
-				firstDayOfWeek: datepicker.options().firstDayOfWeek ? datepicker.options().firstDayOfWeek : 1,
-			},
+		const locale = this.options().locale;
+
+		import('flatpickr/dist/l10n/' + locale + '.js').then(() => {
+
+			flatpickr.localize(flatpickr.l10ns[locale]);
+			flatpickr(this.el, {
+				onMonthChange: function(selectedDates, dateStr, instance) {
+					datepicker.setEnabledDates(instance);
+				},
+				onYearChange: function(selectedDates, dateStr, instance) {
+					datepicker.setEnabledDates(instance);
+				},
+				onReady: function(selectedDates, dateStr, instance) {
+					datepicker.setEnabledDates(instance);
+				},
+				enable: [function (date) {
+					false;
+				}],
+				minDate: datepicker.options().minDate,
+				inline: true,
+				locale: {
+					firstDayOfWeek: datepicker.options().firstDayOfWeek ? datepicker.options().firstDayOfWeek : 1,
+				},
+			});
 		});
+		  
 	}
 
 	setEnabledDates(instance) {

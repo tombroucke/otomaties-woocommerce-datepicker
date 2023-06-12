@@ -2,7 +2,6 @@
 
 namespace Otomaties\WooCommerce\Datepicker;
 
-use Illuminate\Support\Str;
 use Otomaties\WooCommerce\Datepicker\Options;
 use Illuminate\Pipeline\Pipeline;
 
@@ -149,6 +148,7 @@ class Datepicker
         echo view('Otomaties\Woocommerce\Datepicker::datepicker', [
             'datepickerArgs' => json_encode([
                 'id' => $this->getId(),
+                'locale' => substr(get_locale(), 0, 2),
                 'minDate' => $this->minDate()->format('Y-m-d'),
                 'disabledDays' => $this->disabledDays(),
                 'disabledDates' => $this->disabledDates(),

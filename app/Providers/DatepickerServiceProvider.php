@@ -29,10 +29,10 @@ class DatepickerServiceProvider extends ServiceProvider
         $this->app->singleton('Otomaties\Woocommerce\Datepicker\Options', function () {
             return new Options();
         });
-           
+        
         $manifest = new Manifest(
             dirname(plugin_dir_path(__FILE__), 2) . '/public',
-            plugin_dir_url(__FILE__) . 'public',
+            plugins_url('public', dirname(__DIR__)),
             json_decode(file_get_contents(dirname(plugin_dir_path(__FILE__), 2) . '/public/manifest.json'), true),
             json_decode(file_get_contents(dirname(plugin_dir_path(__FILE__), 2) . '/public/entrypoints.json'), true)
         );
@@ -46,8 +46,10 @@ class DatepickerServiceProvider extends ServiceProvider
     */
     public function boot()
     {
+        load_plugin_textdomain('otomaties-woocommerce-datepicker', false, dirname(plugin_basename(__FILE__), 3) . '/resources/languages/');
+        
         $this->loadViewsFrom(
-            __DIR__.'/../../resources/views',
+            dirname(__DIR__, 2) . '/resources/views',
             'Otomaties\Woocommerce\Datepicker',
         );
         
@@ -88,7 +90,7 @@ class DatepickerServiceProvider extends ServiceProvider
                 'permission_callback' => '__return_true',
             ]);
         });
-
+        
         add_action('woocommerce_after_shipping_rate', function ($method, $index) {
             if ($method->get_method_id() !== $this->getChosenShippingMethod()) {
                 return;
@@ -100,8 +102,9 @@ class DatepickerServiceProvider extends ServiceProvider
             }
         }, 10, 2);
     }
-
-    private function getChosenShippingMethod() {
+    
+    private function getChosenShippingMethod()
+    {
         $chosenDatepickerMethod = collect(WC()->session->get("chosen_shipping_methods"))->first();
         return Str::before($chosenDatepickerMethod, ':');
     }

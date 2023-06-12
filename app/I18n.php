@@ -18,6 +18,6 @@ class I18n
      */
     public function loadTextdomain() : void
     {
-        load_plugin_textdomain('plugin-boilerplate', false, dirname(plugin_basename(__FILE__), 2) . '/languages/');
+        load_plugin_textdomain('otomaties-woocommerce-datepicker', false, resource_path('/languages/'));
     }
 }
