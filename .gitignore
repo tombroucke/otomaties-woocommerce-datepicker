@@ -1,4 +1,4 @@
-vendor
+./vendor
 .DS_Store
 .dccache
 node_modules
