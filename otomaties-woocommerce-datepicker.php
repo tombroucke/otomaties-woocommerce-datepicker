@@ -1,7 +1,5 @@
 <?php
 
-use Roots\Acorn\Assets\Manifest;
-
 /**
  * Plugin Name:       Otomaties WooCommerce Datepicker
  * Description:       Add a datepicker on the checkout page
@@ -29,14 +27,6 @@ add_filter('after_setup_theme', function () {
             $app->register(
                 Otomaties\WooCommerce\Datepicker\Providers\DatepickerServiceProvider::class
             );
-            
-            $manifest = new Manifest(
-                plugin_dir_path(__FILE__) . 'public',
-                plugin_dir_url(__FILE__) . 'public',
-                json_decode(file_get_contents(plugin_dir_path(__FILE__) . 'public/manifest.json'), true),
-                json_decode(file_get_contents(plugin_dir_path(__FILE__) . 'public/entrypoints.json'), true)
-            );
-            $app->make('assets')->register('otomaties-woocommerce-datepicker', $manifest);
         });
     }
 }, 20);

@@ -9,7 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Otomaties\WooCommerce\Datepicker\Options;
 use Otomaties\WooCommerce\Datepicker\Datepicker;
 use Otomaties\WooCommerce\Datepicker\Facades\Options as OptionsFacade;
-use Otomaties\WooCommerce\Datepicker\Facades\Datepicker as DatepickerFacade;
+use Roots\Acorn\Assets\Manifest;
 
 class DatepickerServiceProvider extends ServiceProvider
 {
@@ -29,6 +29,14 @@ class DatepickerServiceProvider extends ServiceProvider
         $this->app->singleton('Otomaties\Woocommerce\Datepicker\Options', function () {
             return new Options();
         });
+           
+        $manifest = new Manifest(
+            dirname(plugin_dir_path(__FILE__), 2) . '/public',
+            plugin_dir_url(__FILE__) . 'public',
+            json_decode(file_get_contents(dirname(plugin_dir_path(__FILE__), 2) . '/public/manifest.json'), true),
+            json_decode(file_get_contents(dirname(plugin_dir_path(__FILE__), 2) . '/public/entrypoints.json'), true)
+        );
+        $this->app->make('assets')->register('otomaties-woocommerce-datepicker', $manifest);
     }
     
     /**

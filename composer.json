@@ -19,5 +19,6 @@
         "post-autoload-dump": [
           "Roots\\Acorn\\ComposerScripts::postAutoloadDump"
         ]
-    }
+    },
+    "type": "wordpress-plugin"
 }
