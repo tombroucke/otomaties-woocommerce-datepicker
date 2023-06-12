@@ -5,7 +5,7 @@ use Roots\Acorn\Assets\Manifest;
 /**
  * Plugin Name:       Otomaties WooCommerce Datepicker
  * Description:       Add a datepicker on the checkout page
- * Version:           1.0.0
+ * Version:           0.1.0
  * Author:            Tom Broucke
  * Author URI:        https://tombroucke.be/
  * License:           GPL-2.0+
