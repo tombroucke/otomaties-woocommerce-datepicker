@@ -1,0 +1,21 @@
+{
+  "name": "otomaties-woocommerce-datepicker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "bud build",
+    "dev": "bud dev"
+  },
+  "devDependencies": {
+    "@roots/bud": "^6.12.3",
+    "@roots/bud-sass": "^6.12.3",
+    "@roots/bud-stylelint": "^6.12.3",
+    "@roots/sage": "^6.12.3",
+    "sass": "1.62.1",
+    "stylelint-config-idiomatic-order": "^9.0.0"
+  },
+  "dependencies": {
+    "flatpickr": "^4.6.13"
+  }
+}

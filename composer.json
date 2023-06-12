@@ -1,0 +1,23 @@
+{
+    "name": "tombroucke/otomaties-woocommerce-datepicker",
+    "require": {
+        "roots/acorn": "^3.0",
+        "stoutlogic/acf-builder": "^1.12"
+    },
+    "authors": [
+        {
+            "name": "Tom Broucke",
+            "email": "tom@tombroucke.be"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Otomaties\\WooCommerce\\Datepicker\\": "app/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+          "Roots\\Acorn\\ComposerScripts::postAutoloadDump"
+        ]
+    }
+}
