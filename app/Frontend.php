@@ -19,8 +19,13 @@ class Frontend
         if (!is_checkout()) {
             return;
         }
+        
+        $chosenShippingMethod = app()->make('getChosenShippingMethod');
+        if ($method->get_method_id() !== $chosenShippingMethod) {
+            return;
+        }
 
-        if ($method->get_method_id() !== app()->make('getChosenShippingMethod')) {
+        if (!apply_filters('otomaties_woocommerce_datepicker_render_datepicker', true, $method, $index, $chosenShippingMethod)) {
             return;
         }
         
@@ -60,15 +65,19 @@ class Frontend
 
         $dateTime = \DateTime::createFromFormat('Y-m-d', $date, new \DateTimeZone(wp_timezone_string()));
         $totalRows = collect($totalRows);
-        $index = $totalRows->keys()->search('shipping');
-        $index = $index === false ? $totalRows->count() : $index;
+        $insertAfterKey = 'shipping';
+        $newKey = 'otom_wc_datepicker_date';
         $label = $order->get_meta('otom_wc_datepicker_label') != '' ? $order->get_meta('otom_wc_datepicker_label') : null;
-        $totalRows->splice($index + 1, 0, [
-            'otom_wc_datepicker_date' => [
-                'label' => $label ?? __('Delivery/pickup date', 'otomaties-woocommerce-datepicker'),
-                'value' => date_i18n(get_option('date_format'), $dateTime->getTimestamp()),
-            ],
-        ]);
-        return $totalRows->toArray();
+        $newItem = [
+            'label' => $label ?? __('Delivery/pickup date', 'otomaties-woocommerce-datepicker'),
+            'value' => date_i18n(get_option('date_format'), $dateTime->getTimestamp()),
+            'date' => $dateTime,
+        ];
+        
+        $modifiedTotalRows = $totalRows->flatMap(function ($item, $key) use ($insertAfterKey, $newKey, $newItem) {
+            return ($key === $insertAfterKey) ? [$key => $item, $newKey => $newItem] : [$key => $item];
+        });
+
+        return $modifiedTotalRows->all();
     }
 }

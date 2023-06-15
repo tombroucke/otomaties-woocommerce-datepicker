@@ -153,6 +153,24 @@ class Datepicker
         });
         return $days->values()->toArray();
     }
+
+    public function firstAvailableDate() {
+        // create a date range between minDate and mindate + 6 months
+        $minDate = $this->minDate();
+        $maxDate = clone $minDate;
+        $maxDate->modify('+6 months');
+        $interval = new \DateInterval('P1D');
+        $dateRange = new \DatePeriod($minDate, $interval, $maxDate);
+
+        // loop through the date range and return the first available date
+        foreach ($dateRange as $date) {
+            if (!$this->isDateInvalid($date)) {
+                return $date->format('Y-m-d');
+            }
+        }
+
+        return false;
+    }
     
     public function render($show = true)
     {
@@ -164,6 +182,7 @@ class Datepicker
                 'disabledDays' => $this->disabledDays(),
                 'disabledDates' => $this->disabledDates(),
                 'enabledDates' => $this->enabledDates(),
+                'firstAvailableDate' => $this->firstAvailableDate(),
                 'selectedDate' => WC()->session->get('otomaties_woocommerce_datepicker_' . $this->getId() . '_date'),
             ]),
             'label' => $this->datepickerLabel(),

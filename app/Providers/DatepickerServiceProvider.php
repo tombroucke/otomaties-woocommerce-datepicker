@@ -88,6 +88,7 @@ class DatepickerServiceProvider extends ServiceProvider
         $options = $this->app->make('Otomaties\WooCommerce\Datepicker\Options');
         add_action('acf/init', [$options, 'addOptionsPage'], 10, 2);
         add_action('acf/init', [$options, 'addOptionsFields'], 10, 2);
+        add_action('acf/save_post', [$options, 'cleanUpInactiveDatepickers']);
 
         $api = $this->app->make('Otomaties\WooCommerce\Datepicker\Api');
         add_action('rest_api_init', [$api, 'registerRoutes']);

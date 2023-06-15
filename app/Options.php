@@ -9,14 +9,20 @@ class Options
     public function findDatepickerByShippingMethod(string $shippingMethod)
     {
         global $wpdb;
-        
-        $query = $wpdb->prepare("
+        $datepickerIds = collect($this->activeDatepickers())->keys();
+
+        $likeClauses = [];
+        foreach ($datepickerIds as $datepickerId) {
+            $likeClauses[] = "option_name = 'options_otomaties_wc_datepicker_" . $datepickerId . "_shipping_methods'";
+        }
+
+        $query = $wpdb->prepare(
+            "
             SELECT *
             FROM {$wpdb->prefix}options
-            WHERE option_name LIKE %s
+            WHERE (" . implode(' OR ', $likeClauses) . ")
             AND option_value LIKE %s
             ",
-            '%options_otomaties_wc_datepicker_%_shipping_methods%',
             '%' . $shippingMethod . '%'
         );
 
@@ -107,6 +113,29 @@ class Options
         return $this;
     }
 
+    public function cleanUpInactiveDatepickers()
+    {
+        $currentScreen = get_current_screen();
+        if (strpos($currentScreen->id, 'otomaties-woocommerce-datepicker-settings') == true) {
+
+            $activeDatepickers = collect($this->activeDatepickers())->keys();
+            $activeDatepickerNames = $activeDatepickers
+                ->map(function ($activeDatepickerId) {
+                    return "option_name NOT LIKE '%options_otomaties_wc_datepicker_" . $activeDatepickerId . "_%'";
+                });
+
+            global $wpdb;
+
+            $query = "
+                DELETE FROM {$wpdb->prefix}options
+                WHERE (option_name LIKE '%options_otomaties_wc_datepicker_%_%')
+                AND (" . implode(' AND ', $activeDatepickerNames->toArray()) . ")
+                AND option_name NOT LIKE '%options_otomaties_wc_datepicker_datepickers%'
+            ";
+            $wpdb->query($query);
+        }
+    }
+
     public function addOptionsFields()
     {
         $datepickers = new FieldsBuilder('otomaties-woocommerce-datepicker-datepickers', [
@@ -134,11 +163,11 @@ class Options
             'title' => __('Datepickers details', 'otomaties-woocommerce-datepicker'),
         ]);
 
-        if (count($this->datepickers()) > 0) {
+        if (count($this->activeDatepickers()) > 0) {
 
             $wcShippingMethods = WC()->shipping->get_shipping_methods();
     
-            foreach ($this->datepickers() as $key => $label) {
+            foreach ($this->activeDatepickers() as $key => $label) {
                     $datepickersDetails
                         ->addTab('otomaties_wc_datepicker_' . $key, [
                             'label' => $label,
@@ -230,7 +259,7 @@ class Options
         }
     }
     
-    private function datepickers() {
+    private function activeDatepickers() {
         global $wpdb;
         $datepickers = $wpdb->get_results("SELECT option_id, option_value FROM $wpdb->options WHERE option_name LIKE 'options_otomaties_wc_datepicker_datepickers_%_label'");
         return collect($datepickers)

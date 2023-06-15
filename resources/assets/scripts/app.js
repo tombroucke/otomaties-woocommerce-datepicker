@@ -11,6 +11,7 @@ class Datepicker {
 			firstDayOfWeek: 1,
 			locale: 'fr',
 			selectedDate: null,
+			firstAvailableDate: null,
 		};
 
 		return Object.assign(defaultOptions, datepickerArgs);
@@ -34,16 +35,23 @@ class Datepicker {
 				enable: [],
 			});
 			datepicker.getEnabledDates(tempPickr.currentYear, tempPickr.currentMonth + 1).then((defaultEnabledDates) => {
-				flatpickr(this.el, {
+				const flatpickrInstance = flatpickr(this.el, {
 					onMonthChange: function(selectedDates, dateStr, instance) {
+						instance.calendarContainer.classList.add('loading');
 						datepicker.getEnabledDates(instance.currentYear, instance.currentMonth + 1).then((enabledDates) => {
 							instance.set('enable', enabledDates);
+							instance.calendarContainer.classList.remove('loading');
 						});
 					},
 					onYearChange: function(selectedDates, dateStr, instance) {
+						instance.calendarContainer.classList.add('loading');
 						datepicker.getEnabledDates(instance.currentYear, instance.currentMonth + 1).then((enabledDates) => {
 							instance.set('enable', enabledDates);
+							instance.calendarContainer.classList.remove('loading');
 						});
+					},
+					onReady: function(selectedDates, dateStr, instance) {
+						instance.calendarContainer.classList.remove('loading');
 					},
 					enable: [function (date) {
 						const isoDate = datepicker.toISOString(date);
@@ -56,6 +64,11 @@ class Datepicker {
 					},
 					defaultDate: datepicker.options().selectedDate,
 				});
+				
+				if (datepicker.options().firstAvailableDate) {
+					const firstAvailableDate = new Date(datepicker.options().firstAvailableDate);
+					flatpickrInstance.jumpToDate(firstAvailableDate, true);
+				}
 			});
 
 		});
