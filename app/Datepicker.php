@@ -45,6 +45,16 @@ class Datepicker
         return $this->options->datepickerLabel($this->getId());
     }
 
+    public function missingDateMessage()
+    {
+        return $this->options->missingDateMessage($this->getId()) ?? __('Please select a delivery date.', 'otomaties-woocommerce-datepicker');
+    }
+
+    public function invalidDateMessage()
+    {
+        return $this->options->invalidDateMessage($this->getId()) ?? __('Please select a valid delivery date.', 'otomaties-woocommerce-datepicker');
+    }
+
     public function disabledDates()
     {
         return $this->options->disabledDates($this->getId());
@@ -72,10 +82,10 @@ class Datepicker
         return $this->options->buffer($this->getId()) ?? 0;
     }
 
-    public function isDateInvalid(\DateTime|bool $date) 
+    public function isDateInvalid(\DateTime|bool $date)
     {
         if (! $date instanceof \DateTime) {
-            return __('Please select a delivery date.', 'otomaties-woocommerce-datepicker');
+            return $this->missingDateMessage();
         }
 
         foreach ($this->enabledDates() as $enabledPeriod) {
@@ -89,20 +99,20 @@ class Datepicker
             ->through([
                 function ($date, $next) {
                     if (in_array($date->format('w'), $this->disabledDays())) {
-                        return __('Please select a valid delivery date.', 'otomaties-woocommerce-datepicker');
+                        return $this->invalidDateMessage();
                     }
                     return $next($date);
                 },
                 function ($date, $next) {
                     if ($date->format('Ymd') < $this->minDate()->format('Ymd')) {
-                        return __('Please select a valid delivery date.', 'otomaties-woocommerce-datepicker');
+                        return $this->invalidDateMessage();
                     }
                     return $next($date);
                 },
                 function ($date, $next) {
                     foreach ($this->disabledDates() as $disabledPeriod) {
                         if ($this->dateIsInRange($date, $disabledPeriod['from'], $disabledPeriod['to'])) {
-                            return __('Please select a valid delivery date.', 'otomaties-woocommerce-datepicker');
+                            return $this->invalidDateMessage();
                         }
                     }
                     return $next($date);
@@ -119,9 +129,9 @@ class Datepicker
             });
     }
 
-    private function dateIsInRange($date, $from, $to) {
-        if (
-            ( $to && $date->format('Ymd') >= $from && $date->format('Ymd') <= $to )
+    private function dateIsInRange($date, $from, $to)
+    {
+        if (( $to && $date->format('Ymd') >= $from && $date->format('Ymd') <= $to )
             || ( ! $to && $date->format('Ymd') == $from )
         ) {
             return true;
@@ -129,7 +139,8 @@ class Datepicker
         return false;
     }
 
-    public function enabledDatesFor($month, $year) {
+    public function enabledDatesFor($month, $year)
+    {
         $days = collect(range(1, cal_days_in_month(CAL_GREGORIAN, $month, $year)));
         $days = $days->map(function ($day) use ($month, $year) {
             return new \DateTime($year . '-' . $month . '-' . $day);
@@ -153,9 +164,11 @@ class Datepicker
                 'disabledDays' => $this->disabledDays(),
                 'disabledDates' => $this->disabledDates(),
                 'enabledDates' => $this->enabledDates(),
+                'selectedDate' => WC()->session->get('otomaties_woocommerce_datepicker_' . $this->getId() . '_date'),
             ]),
             'label' => $this->datepickerLabel(),
             'show' => $show,
+            'id' => $this->getId(),
         ]);
     }
 }

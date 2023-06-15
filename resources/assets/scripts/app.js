@@ -10,6 +10,7 @@ class Datepicker {
 		const defaultOptions = {
 			firstDayOfWeek: 1,
 			locale: 'fr',
+			selectedDate: null,
 		};
 
 		return Object.assign(defaultOptions, datepickerArgs);
@@ -25,53 +26,59 @@ class Datepicker {
 	initFlatpickr() {
 		const datepicker = this;
 		const locale = this.options().locale;
-
 		import('flatpickr/dist/l10n/' + locale + '.js').then(() => {
-
 			flatpickr.localize(flatpickr.l10ns[locale]);
-			flatpickr(this.el, {
-				onMonthChange: function(selectedDates, dateStr, instance) {
-					datepicker.setEnabledDates(instance);
-				},
-				onYearChange: function(selectedDates, dateStr, instance) {
-					datepicker.setEnabledDates(instance);
-				},
-				onReady: function(selectedDates, dateStr, instance) {
-					datepicker.setEnabledDates(instance);
-				},
-				enable: [function (date) {
-					false;
-				}],
-				minDate: datepicker.options().minDate,
+			
+			const tempPickr = flatpickr(this.el, {
 				inline: true,
-				locale: {
-					firstDayOfWeek: datepicker.options().firstDayOfWeek ? datepicker.options().firstDayOfWeek : 1,
-				},
+				enable: [],
 			});
+			datepicker.getEnabledDates(tempPickr.currentYear, tempPickr.currentMonth + 1).then((defaultEnabledDates) => {
+				flatpickr(this.el, {
+					onMonthChange: function(selectedDates, dateStr, instance) {
+						datepicker.getEnabledDates(instance.currentYear, instance.currentMonth + 1).then((enabledDates) => {
+							instance.set('enable', enabledDates);
+						});
+					},
+					onYearChange: function(selectedDates, dateStr, instance) {
+						datepicker.getEnabledDates(instance.currentYear, instance.currentMonth + 1).then((enabledDates) => {
+							instance.set('enable', enabledDates);
+						});
+					},
+					enable: [function (date) {
+						const isoDate = datepicker.toISOString(date);
+						return defaultEnabledDates.includes(isoDate);
+					}],
+					minDate: datepicker.options().minDate,
+					inline: true,
+					locale: {
+						firstDayOfWeek: datepicker.options().firstDayOfWeek ? datepicker.options().firstDayOfWeek : 1,
+					},
+					defaultDate: datepicker.options().selectedDate,
+				});
+			});
+
 		});
 		  
 	}
 
-	setEnabledDates(instance) {
-		const currentYear = instance.currentYear;
-	  	const currentMonth = instance.currentMonth + 1;
+	getEnabledDates(year, month) {
 		const datepickerId = this.options().id;
 
 		const endpoint = '/wp-json/otomaties-woocommerce-datepicker/v1/datepicker/' + datepickerId + '/enabled-dates';
 		const queryParams = new URLSearchParams({
-			year: currentYear,
-			month: currentMonth,
+			year: year,
+			month: month,
 		});
 
-		fetch(`${endpoint}?${queryParams}`)
-		.then(response => response.json())
-		.then(data => {
-			instance.set('enable', data);
-			return data;
-		})
-		.catch(error => {
-			return [];
-		});
+		return fetch(`${endpoint}?${queryParams}`)
+			.then(response => response.json())
+			.then(data => {
+				return data;
+			})
+			.catch(error => {
+				return [];
+			});
 	}
 
 	toISOString(date) {
@@ -84,7 +91,7 @@ class Datepicker {
 }
 
 function initDatepickers(initFlatpickr = true) {
-	const datepickerElements = document.querySelectorAll('.otomaties-woocommerce-datepicker input');
+	const datepickerElements = document.querySelectorAll('.otomaties-woocommerce-datepicker input[name="otomaties-woocommerce-datepicker--date"]');
 	for (const datepickerElement of datepickerElements) {
 		const datepicker = new Datepicker(datepickerElement);
 		if (initFlatpickr) {

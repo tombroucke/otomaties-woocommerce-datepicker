@@ -17,7 +17,7 @@ if (! defined('WPINC')) {
     die;
 }
 
-add_filter('after_setup_theme', function () {
+add_action('after_setup_theme', function () {
     if (file_exists($composer = __DIR__ . '/vendor/autoload.php')) {
         require_once $composer;
     }

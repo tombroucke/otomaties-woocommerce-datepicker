@@ -4,7 +4,7 @@ namespace Otomaties\WooCommerce\Datepicker\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class Options extends Facade
+class Frontend extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -13,11 +13,6 @@ class Options extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'Otomaties\WooCommerce\Datepicker\Options';
-    }
-
-    public static function instance()
-    {
-        return app(static::getFacadeAccessor());
+        return 'Otomaties\WooCommerce\Datepicker\Frontend';
     }
 }

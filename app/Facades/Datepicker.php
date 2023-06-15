@@ -13,6 +13,6 @@ class Datepicker extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'Otomaties\Woocommerce\Datepicker\Datepicker';
+        return 'Otomaties\WooCommerce\Datepicker\Datepicker';
     }
 }

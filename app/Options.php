@@ -52,6 +52,16 @@ class Options
         return get_field('otomaties_wc_datepicker_' . $datepickerId . '_datepicker_label', 'option');
     }
 
+    public function missingDateMessage(string $datepickerId)
+    {
+        return get_field('otomaties_wc_datepicker_' . $datepickerId . '_validation_missing', 'option');
+    }
+
+    public function invalidDateMessage(string $datepickerId)
+    {
+        return get_field('otomaties_wc_datepicker_' . $datepickerId . '_validation_incorrect', 'option');
+    }
+
     public function administrationLabel(string $datepickerId)
     {
         return get_field('otomaties_wc_datepicker_' . $datepickerId . '_administration_label', 'option');
@@ -89,7 +99,7 @@ class Options
                 'page_title'    => __('Datepicker', 'otomaties-woocommerce-datepicker'),
                 'menu_title'    => __('Datepicker', 'otomaties-woocommerce-datepicker'),
                 'menu_slug'     => 'otomaties-woocommerce-datepicker-settings',
-                'icon_url'      => 'dashicons-airplane',
+                'icon_url'      => 'dashicons-calendar',
                 'capability'    => 'manage_woocommerce',
                 'redirect'      => false,
             )
@@ -124,88 +134,100 @@ class Options
             'title' => __('Datepickers details', 'otomaties-woocommerce-datepicker'),
         ]);
 
+        if (count($this->datepickers()) > 0) {
 
-        $wcShippingMethods = WC()->shipping->get_shipping_methods();
-
-        foreach ($this->datepickers() as $key => $label) {
-                $datepickersDetails
-                    ->addTab('otomaties_wc_datepicker_' . $key, [
-                        'label' => $label,
-                    ])
-                    ->addSelect('otomaties_wc_datepicker_' . $key . '_shipping_methods', [
-                        'label' => __('Shipping method', 'otomaties-woocommerce-datepicker'),
-                        'choices' => array_map(function ($shippingMethod) {
-                            return $shippingMethod->get_method_title();
-                        }, $wcShippingMethods),
-                        'multiple' => 1
-                    ])
-                    ->addText('otomaties_wc_datepicker_' . $key . '_administration_label', [
-                        'label' => __('Administration label', 'otomaties-woocommerce-datepicker'),
-                        'instructions' => __('This will displayed in on the thankyou-page, e-mails and in the WooCommere backend', 'otomaties-woocommerce-datepicker'),
-                        'default_value' => sprintf(__('%s date', 'otomaties-woocommerce-datepicker'), $label),
-                    ])
-                    ->addText('otomaties_wc_datepicker_' . $key . '_datepicker_label', [
-                        'label' => __('Datepicker label', 'otomaties-woocommerce-datepicker'),
-                        'instructions' => __('This will displayed right above the datepicker', 'otomaties-woocommerce-datepicker'),
-                        'default_value' => sprintf(__('Choose a %s date', 'otomaties-woocommerce-datepicker'), strtolower($label)),
-                    ])
-                    ->addNumber('otomaties_wc_datepicker_' . $key . '_buffer', [
-                        'label' => __('Buffer', 'otomaties-woocommerce-datepicker'),
-                        'instructions' => __('The number of hours that should be added to the datepicker\'s min date', 'otomaties-woocommerce-datepicker'),
-                        'default_value' => 0,
-                    ])
-                    ->addSelect('otomaties_wc_datepicker_' . $key . '_disabled_days', [
-                        'label' => __('Disabled days', 'otomaties-woocommerce-datepicker'),
-                        'multiple' => 1,
-                        'ui' => 1,
-                        'choices' => [
-                            'monday' => __('Monday', 'otomaties-woocommerce-datepicker'),
-                            'tuesday' => __('Tuesday', 'otomaties-woocommerce-datepicker'),
-                            'wednesday' => __('Wednesday', 'otomaties-woocommerce-datepicker'),
-                            'thursday' => __('Thursday', 'otomaties-woocommerce-datepicker'),
-                            'friday' => __('Friday', 'otomaties-woocommerce-datepicker'),
-                            'saturday' => __('Saturday', 'otomaties-woocommerce-datepicker'),
-                            'sunday' => __('Sunday', 'otomaties-woocommerce-datepicker'),
-                        ],
-                    ])
-                    ->addRepeater('otomaties_wc_datepicker_' . $key . '_disabled_dates', [
-                        'label' => __('Disabled dates', 'otomaties-woocommerce-datepicker'),
-                        'layout' => 'table',
-                        'button_label' => __('Add date', 'otomaties-woocommerce-datepicker'),
-                    ])
-                        ->addDatepicker('from_date', [
-                            'label' => __('Date from', 'otomaties-woocommerce-datepicker'),
-                            'return_format' => 'Ymd',
-                            'required' => true
+            $wcShippingMethods = WC()->shipping->get_shipping_methods();
+    
+            foreach ($this->datepickers() as $key => $label) {
+                    $datepickersDetails
+                        ->addTab('otomaties_wc_datepicker_' . $key, [
+                            'label' => $label,
                         ])
-                        ->addDatepicker('to_date', [
-                            'label' => __('Date to', 'otomaties-woocommerce-datepicker'),
-                            'return_format' => 'Ymd',
-                            'instructions' => __('Leave empty if you want to disable only one date', 'otomaties-woocommerce-datepicker'),
-                            'required' => false
+                        ->addSelect('otomaties_wc_datepicker_' . $key . '_shipping_methods', [
+                            'label' => __('Shipping method', 'otomaties-woocommerce-datepicker'),
+                            'choices' => array_map(function ($shippingMethod) {
+                                return $shippingMethod->get_method_title();
+                            }, $wcShippingMethods),
+                            'multiple' => 1
                         ])
-                    ->endRepeater()
-                    ->addRepeater('otomaties_wc_datepicker_' . $key . '_enabled_dates', [
-                        'label' => __('Enabled dates', 'otomaties-woocommerce-datepicker'),
-                        'layout' => 'table',
-                        'button_label' => __('Add date', 'otomaties-woocommerce-datepicker'),
-                    ])
-                        ->addDatepicker('from_date', [
-                            'label' => __('Date from', 'otomaties-woocommerce-datepicker'),
-                            'return_format' => 'Ymd',
-                            'required' => true
+                        ->addText('otomaties_wc_datepicker_' . $key . '_administration_label', [
+                            'label' => __('Administration label', 'otomaties-woocommerce-datepicker'),
+                            'instructions' => __('This will displayed in on the thankyou-page, e-mails and in the WooCommere backend', 'otomaties-woocommerce-datepicker'),
+                            'default_value' => sprintf(__('%s date', 'otomaties-woocommerce-datepicker'), $label),
                         ])
-                        ->addDatepicker('to_date', [
-                            'label' => __('Date to', 'otomaties-woocommerce-datepicker'),
-                            'return_format' => 'Ymd',
-                            'instructions' => __('Leave empty if you want to disable only one date', 'otomaties-woocommerce-datepicker'),
-                            'required' => false
+                        ->addText('otomaties_wc_datepicker_' . $key . '_datepicker_label', [
+                            'label' => __('Datepicker label', 'otomaties-woocommerce-datepicker'),
+                            'instructions' => __('This will displayed right above the datepicker', 'otomaties-woocommerce-datepicker'),
+                            'default_value' => sprintf(__('Choose a %s date', 'otomaties-woocommerce-datepicker'), strtolower($label)),
                         ])
-                    ->endRepeater();
+                        ->addText('otomaties_wc_datepicker_' . $key . '_validation_missing', [
+                            'label' => __('Missing date error message', 'otomaties-woocommerce-datepicker'),
+                            'instructions' => __('When a client doesn\'t provide a date, this error message will be dipslayed.', 'otomaties-woocommerce-datepicker'),
+                            'default_value' => sprintf(__('%s date is missing', 'otomaties-woocommerce-datepicker'), $label),
+                        ])
+                        ->addText('otomaties_wc_datepicker_' . $key . '_validation_incorrect', [
+                            'label' => __('Incorrect date error message', 'otomaties-woocommerce-datepicker'),
+                            'instructions' => __('When a client provides an invalid date, this error message will be dipslayed.', 'otomaties-woocommerce-datepicker'),
+                            'default_value' => sprintf(__('%s date is invalid', 'otomaties-woocommerce-datepicker'), $label),
+                        ])
+                        ->addNumber('otomaties_wc_datepicker_' . $key . '_buffer', [
+                            'label' => __('Buffer', 'otomaties-woocommerce-datepicker'),
+                            'instructions' => __('The number of hours that should be added to the datepicker\'s min date', 'otomaties-woocommerce-datepicker'),
+                            'default_value' => 0,
+                        ])
+                        ->addSelect('otomaties_wc_datepicker_' . $key . '_disabled_days', [
+                            'label' => __('Disabled days', 'otomaties-woocommerce-datepicker'),
+                            'multiple' => 1,
+                            'ui' => 1,
+                            'choices' => [
+                                'monday' => __('Monday', 'otomaties-woocommerce-datepicker'),
+                                'tuesday' => __('Tuesday', 'otomaties-woocommerce-datepicker'),
+                                'wednesday' => __('Wednesday', 'otomaties-woocommerce-datepicker'),
+                                'thursday' => __('Thursday', 'otomaties-woocommerce-datepicker'),
+                                'friday' => __('Friday', 'otomaties-woocommerce-datepicker'),
+                                'saturday' => __('Saturday', 'otomaties-woocommerce-datepicker'),
+                                'sunday' => __('Sunday', 'otomaties-woocommerce-datepicker'),
+                            ],
+                        ])
+                        ->addRepeater('otomaties_wc_datepicker_' . $key . '_disabled_dates', [
+                            'label' => __('Disabled dates', 'otomaties-woocommerce-datepicker'),
+                            'layout' => 'table',
+                            'button_label' => __('Add date', 'otomaties-woocommerce-datepicker'),
+                        ])
+                            ->addDatepicker('from_date', [
+                                'label' => __('Date from', 'otomaties-woocommerce-datepicker'),
+                                'return_format' => 'Ymd',
+                                'required' => true
+                            ])
+                            ->addDatepicker('to_date', [
+                                'label' => __('Date to', 'otomaties-woocommerce-datepicker'),
+                                'return_format' => 'Ymd',
+                                'instructions' => __('Leave empty if you want to disable only one date', 'otomaties-woocommerce-datepicker'),
+                                'required' => false
+                            ])
+                        ->endRepeater()
+                        ->addRepeater('otomaties_wc_datepicker_' . $key . '_enabled_dates', [
+                            'label' => __('Enabled dates', 'otomaties-woocommerce-datepicker'),
+                            'layout' => 'table',
+                            'button_label' => __('Add date', 'otomaties-woocommerce-datepicker'),
+                        ])
+                            ->addDatepicker('from_date', [
+                                'label' => __('Date from', 'otomaties-woocommerce-datepicker'),
+                                'return_format' => 'Ymd',
+                                'required' => true
+                            ])
+                            ->addDatepicker('to_date', [
+                                'label' => __('Date to', 'otomaties-woocommerce-datepicker'),
+                                'return_format' => 'Ymd',
+                                'instructions' => __('Leave empty if you want to disable only one date', 'otomaties-woocommerce-datepicker'),
+                                'required' => false
+                            ])
+                        ->endRepeater();
+            }
+    
+            $datepickersDetails->setLocation('options_page', '==', 'otomaties-woocommerce-datepicker-settings');
+            acf_add_local_field_group($datepickersDetails->build());
         }
-
-        $datepickersDetails->setLocation('options_page', '==', 'otomaties-woocommerce-datepicker-settings');
-        acf_add_local_field_group($datepickersDetails->build());
     }
     
     private function datepickers() {

@@ -2,14 +2,10 @@
 
 namespace Otomaties\WooCommerce\Datepicker\Providers;
 
-use DateTime;
-use function Roots\bundle;
 use Illuminate\Support\Str;
-use Illuminate\Support\ServiceProvider;
-use Otomaties\WooCommerce\Datepicker\Options;
-use Otomaties\WooCommerce\Datepicker\Datepicker;
-use Otomaties\WooCommerce\Datepicker\Facades\Options as OptionsFacade;
 use Roots\Acorn\Assets\Manifest;
+use Illuminate\Support\ServiceProvider;
+use Otomaties\WooCommerce\Datepicker\Datepicker;
 
 class DatepickerServiceProvider extends ServiceProvider
 {
@@ -20,14 +16,28 @@ class DatepickerServiceProvider extends ServiceProvider
     */
     public function register()
     {
-        $this->app->singleton('Otomaties\Woocommerce\Datepicker\Datepicker', function () {
-            $options = $this->app->make('Otomaties\Woocommerce\Datepicker\Options');
-            $datepickerId = $options->findDatepickerByShippingMethod($this->getChosenShippingMethod());
+        $this->app->singleton('Otomaties\WooCommerce\Datepicker\Datepicker', function () {
+            $options = $this->app->make('Otomaties\WooCommerce\Datepicker\Options');
+            $chosenShippingMethod = $this->app->make('getChosenShippingMethod');
+            $datepickerId = $options->findDatepickerByShippingMethod($chosenShippingMethod);
             return $datepickerId ? new Datepicker($datepickerId, $options) : null;
         });
-        
-        $this->app->singleton('Otomaties\Woocommerce\Datepicker\Options', function () {
-            return new Options();
+
+        $singletons = [
+            'Otomaties\WooCommerce\Datepicker\Options',
+            'Otomaties\WooCommerce\Datepicker\Frontend',
+            'Otomaties\WooCommerce\Datepicker\Api',
+            'Otomaties\WooCommerce\Datepicker\Checkout',
+        ];
+        foreach ($singletons as $singleton) {
+            $this->app->singleton($singleton, function () use ($singleton) {
+                return new $singleton();
+            });
+        }
+
+        $this->app->bind('getChosenShippingMethod', function () {
+            $chosenDatepickerMethod = collect(WC()->session->get("chosen_shipping_methods"))->first();
+            return Str::before($chosenDatepickerMethod, ':');
         });
         
         $manifest = new Manifest(
@@ -47,65 +57,53 @@ class DatepickerServiceProvider extends ServiceProvider
     public function boot()
     {
         load_plugin_textdomain('otomaties-woocommerce-datepicker', false, dirname(plugin_basename(__FILE__), 3) . '/resources/languages/');
-        
+
         $this->loadViewsFrom(
             dirname(__DIR__, 2) . '/resources/views',
             'Otomaties\Woocommerce\Datepicker',
         );
         
-        add_action('wp_enqueue_scripts', function () {
-            if (is_checkout()) {
-                bundle('otomaties-woocommerce-datepicker', 'otomaties-woocommerce-datepicker')->enqueue();
+        if ($this->isWooCommerceActive() && $this->isAcfActive()) {
+            $this->registerActionsAndFilters();
+        } elseif (is_admin()) {
+            if (!$this->isWooCommerceActive()) {
+                add_action('admin_notices', function () {
+                    echo '<div class="notice notice-error is-dismissible"><p>WooCommerce is not active. Please activate WooCommerce to use the Otomaties WooCommerce Datepicker plugin.</p></div>';
+                });
+            } elseif (!$this->isAcfActive()) {
+                add_action('admin_notices', function () {
+                    echo '<div class="notice notice-error is-dismissible"><p>Advanced Custom Fields is not active. Please activate Advanced Custom Fields to use the Otomaties WooCommerce Datepicker plugin.</p></div>';
+                });
             }
-        });
-        
-        add_action('acf/init', function () {
-            OptionsFacade::addOptionsPage()->addOptionsFields();
-        });
-        
-        add_action('woocommerce_after_checkout_validation', function ($fields, $errors) {
-            if (!isset($_POST['otomaties-woocommerce-datepicker'])) {
-                return;
-            }
-            
-            $timeZone = new \DateTimeZone(wp_timezone_string());
-            $dateTime = DateTime::createFromFormat('Y-m-d', $_POST['otomaties-woocommerce-datepicker'], $timeZone);
-            $invalidReason = app()->make('Otomaties\Woocommerce\Datepicker\Datepicker')->isDateInvalid($dateTime);
-            if ($invalidReason) {
-                $errors->add('validation', $invalidReason);
-            }
-        }, 10, 2);
-        
-        add_action('rest_api_init', function () {
-            register_rest_route('otomaties-woocommerce-datepicker/v1', '/datepicker/(?P<datepicker_id>\d+)/enabled-dates', [
-                'methods' => 'GET',
-                'callback' => function (\WP_REST_Request $request) {
-                    $datepickerId = $request->get_param('datepicker_id');
-                    $month = $request->get_param('month');
-                    $year = $request->get_param('year');
-                    $datepicker = new Datepicker($datepickerId, $this->app->make('Otomaties\Woocommerce\Datepicker\Options'));
-                    wp_send_json($datepicker->enabledDatesFor($month, $year));
-                    exit();
-                },
-                'permission_callback' => '__return_true',
-            ]);
-        });
-        
-        add_action('woocommerce_after_shipping_rate', function ($method, $index) {
-            if ($method->get_method_id() !== $this->getChosenShippingMethod()) {
-                return;
-            }
-            $datepickerId = OptionsFacade::findDatepickerByShippingMethod($method->get_method_id());
-            if ($datepickerId) {
-                $datepicker = new Datepicker($datepickerId, $this->app->make('Otomaties\Woocommerce\Datepicker\Options'));
-                $datepicker->render();
-            }
-        }, 10, 2);
+        }
     }
-    
-    private function getChosenShippingMethod()
-    {
-        $chosenDatepickerMethod = collect(WC()->session->get("chosen_shipping_methods"))->first();
-        return Str::before($chosenDatepickerMethod, ':');
+
+    public function registerActionsAndFilters() {
+        $frontend = $this->app->make('Otomaties\WooCommerce\Datepicker\Frontend');
+        add_action('wp_enqueue_scripts', [$frontend, 'enqueueScripts']);
+        add_action('woocommerce_after_shipping_rate', [$frontend, 'renderDatepicker'], 10, 2);
+        add_action('wp_footer', [$frontend, 'dispatchJqueryEvents']);
+        add_filter('woocommerce_get_order_item_totals', [$frontend, 'addDateRow'], 10, 3);
+        
+        $options = $this->app->make('Otomaties\WooCommerce\Datepicker\Options');
+        add_action('acf/init', [$options, 'addOptionsPage'], 10, 2);
+        add_action('acf/init', [$options, 'addOptionsFields'], 10, 2);
+
+        $api = $this->app->make('Otomaties\WooCommerce\Datepicker\Api');
+        add_action('rest_api_init', [$api, 'registerRoutes']);
+
+        $checkout = $this->app->make('Otomaties\WooCommerce\Datepicker\Checkout');
+        add_action('woocommerce_after_checkout_validation', [$checkout, 'validate'], 10, 2);
+        add_action('woocommerce_checkout_update_order_review', [$checkout, 'saveDateToSession']);
+        add_action('woocommerce_before_checkout_process', [$checkout, 'updateSession']);
+        add_action('woocommerce_checkout_order_processed', [$checkout, 'saveDatepickerDate'], 10, 3);
+    }
+
+    private function isWooCommerceActive() {
+        return class_exists('WooCommerce');
+    }
+
+    private function isAcfActive() {
+        return class_exists('acf');
     }
 }
