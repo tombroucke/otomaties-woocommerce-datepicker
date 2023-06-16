@@ -182,10 +182,10 @@ class Datepicker
     /**
      * Test if date is invalid. Return false if date is valid, return error message if date is invalid.
      *
-     * @param \DateTime $date
+     * @param \DateTime|bool $date
      * @return boolean
      */
-    public function isDateInvalid(\DateTime $date)
+    public function isDateInvalid(\DateTime|bool $date)
     {
         if (! $date instanceof \DateTime) {
             return $this->missingDateMessage();
