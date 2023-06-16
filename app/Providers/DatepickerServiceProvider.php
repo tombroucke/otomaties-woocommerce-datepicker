@@ -26,7 +26,6 @@ class DatepickerServiceProvider extends ServiceProvider
         $singletons = [
             'Otomaties\WooCommerce\Datepicker\Options',
             'Otomaties\WooCommerce\Datepicker\Frontend',
-            'Otomaties\WooCommerce\Datepicker\Api',
             'Otomaties\WooCommerce\Datepicker\Checkout',
         ];
         foreach ($singletons as $singleton) {
@@ -89,9 +88,6 @@ class DatepickerServiceProvider extends ServiceProvider
         add_action('acf/init', [$options, 'addOptionsPage'], 10, 2);
         add_action('acf/init', [$options, 'addOptionsFields'], 10, 2);
         add_action('acf/save_post', [$options, 'cleanUpInactiveDatepickers']);
-
-        $api = $this->app->make('Otomaties\WooCommerce\Datepicker\Api');
-        add_action('rest_api_init', [$api, 'registerRoutes']);
 
         $checkout = $this->app->make('Otomaties\WooCommerce\Datepicker\Checkout');
         add_action('woocommerce_after_checkout_validation', [$checkout, 'validate'], 10, 2);

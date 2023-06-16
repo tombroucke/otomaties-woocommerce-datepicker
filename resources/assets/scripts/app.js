@@ -11,9 +11,12 @@ class Datepicker {
 			firstDayOfWeek: 1,
 			locale: 'fr',
 			selectedDate: null,
-			firstAvailableDate: null,
+			minDate: null,
+			maxDate: null,
+			enabledDates: [],
+			disabledDates: [],
+			disabledDays: [],
 		};
-
 		return Object.assign(defaultOptions, datepickerArgs);
 	}
 
@@ -24,74 +27,84 @@ class Datepicker {
 		});
 	}
 
+	isDisabledPipeline(date) {
+		const enabledDates = this.options().enabledDates;
+		const disabledDates = this.options().disabledDates;
+		const disabledDays = this.options().disabledDays;
+		const isoDate = this.toISOString(date);
+
+		if (enabledDates.includes(isoDate)) {
+			return false;
+		}
+
+		// test if date is bigger than mindate
+		if (this.options().minDate) {
+			const minDate = new Date(this.options().minDate);
+			// with correct timezone
+			minDate.setHours(0, 0, 0, 0);
+			if (date < minDate) {
+				return true;
+			}
+		}
+		
+		if (disabledDates.includes(isoDate)) {
+			return true;
+		}
+		
+		if (disabledDays.includes(date.getDay())) {
+			return true;
+		}
+
+		return false;
+
+	}
+
 	initFlatpickr() {
 		const datepicker = this;
 		const locale = this.options().locale;
 		import('flatpickr/dist/l10n/' + locale + '.js').then(() => {
 			flatpickr.localize(flatpickr.l10ns[locale]);
-			
-			const tempPickr = flatpickr(this.el, {
+			const flatpickrInstance = flatpickr(this.el, {
+				disable: [
+					function (date) {
+						return datepicker.isDisabledPipeline(date);
+					}
+				],
+				onReady: function(selectedDates, dateStr, instance) {
+					let changedMonth = 0;
+					while(!datepicker.monthHasEnabledDate(instance)) {
+						instance.changeMonth(1);
+						changedMonth++;
+						if (changedMonth > 24) { // Prevent infinite loop
+							break;
+						}
+					}
+				},
+				minDate: datepicker.options().minDate,
+				maxDate: datepicker.options().maxDate,
 				inline: true,
-				enable: [],
-			});
-			datepicker.getEnabledDates(tempPickr.currentYear, tempPickr.currentMonth + 1).then((defaultEnabledDates) => {
-				const flatpickrInstance = flatpickr(this.el, {
-					onMonthChange: function(selectedDates, dateStr, instance) {
-						instance.calendarContainer.classList.add('loading');
-						datepicker.getEnabledDates(instance.currentYear, instance.currentMonth + 1).then((enabledDates) => {
-							instance.set('enable', enabledDates);
-							instance.calendarContainer.classList.remove('loading');
-						});
-					},
-					onYearChange: function(selectedDates, dateStr, instance) {
-						instance.calendarContainer.classList.add('loading');
-						datepicker.getEnabledDates(instance.currentYear, instance.currentMonth + 1).then((enabledDates) => {
-							instance.set('enable', enabledDates);
-							instance.calendarContainer.classList.remove('loading');
-						});
-					},
-					onReady: function(selectedDates, dateStr, instance) {
-						instance.calendarContainer.classList.remove('loading');
-					},
-					enable: [function (date) {
-						const isoDate = datepicker.toISOString(date);
-						return defaultEnabledDates.includes(isoDate);
-					}],
-					minDate: datepicker.options().minDate,
-					inline: true,
-					locale: {
-						firstDayOfWeek: datepicker.options().firstDayOfWeek ? datepicker.options().firstDayOfWeek : 1,
-					},
-					defaultDate: datepicker.options().selectedDate,
-				});
-				
-				if (datepicker.options().firstAvailableDate) {
-					const firstAvailableDate = new Date(datepicker.options().firstAvailableDate);
-					flatpickrInstance.jumpToDate(firstAvailableDate, true);
-				}
-			});
-
+				locale: {
+					firstDayOfWeek: datepicker.options().firstDayOfWeek ? datepicker.options().firstDayOfWeek : 1,
+				},
+				defaultDate: datepicker.options().selectedDate,
+			});	
 		});
-		  
 	}
 
-	getEnabledDates(year, month) {
-		const datepickerId = this.options().id;
-
-		const endpoint = '/wp-json/otomaties-woocommerce-datepicker/v1/datepicker/' + datepickerId + '/enabled-dates';
-		const queryParams = new URLSearchParams({
-			year: year,
-			month: month,
-		});
-
-		return fetch(`${endpoint}?${queryParams}`)
-			.then(response => response.json())
-			.then(data => {
-				return data;
-			})
-			.catch(error => {
-				return [];
-			});
+	monthHasEnabledDate(instance) {
+		let firstEnabledDate = null;
+		const month = instance.currentMonth;
+		const year = instance.currentYear;
+		const daysInMonth = new Date(year, month + 1, 0).getDate();
+		for (let day = 1; day <= daysInMonth; day++) {
+			const date = new Date(year, month, day);
+			
+			if (!this.isDisabledPipeline(date)) {
+				firstEnabledDate = date;
+				break;
+			}
+		}
+		return firstEnabledDate;
 	}
 
 	toISOString(date) {

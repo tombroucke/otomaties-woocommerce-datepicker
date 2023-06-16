@@ -38,7 +38,7 @@ class Frontend
 
     public function dispatchJqueryEvents()
     {
-        if (!is_cart() && !is_checkout()) {
+        if (!is_checkout()) {
             return;
         }
         ?>

@@ -4,6 +4,7 @@ namespace Otomaties\WooCommerce\Datepicker;
 
 use Otomaties\WooCommerce\Datepicker\Options;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Collection;
 
 class Datepicker
 {
@@ -16,7 +17,7 @@ class Datepicker
         return $this->id;
     }
 
-    public function disabledDays()
+    public function disabledDays() : Collection
     {
         $days = collect([
             'sunday',
@@ -32,7 +33,7 @@ class Datepicker
 
         return $disabledDays->map(function ($day) use ($days) {
             return $days->search($day);
-        })->toArray();
+        });
     }
 
     public function administrationLabel()
@@ -55,14 +56,43 @@ class Datepicker
         return $this->options->invalidDateMessage($this->getId()) ?? __('Please select a valid delivery date.', 'otomaties-woocommerce-datepicker');
     }
 
-    public function disabledDates()
+    public function disabledDates() : Collection
     {
-        return $this->options->disabledDates($this->getId());
+        return apply_filters('otomaties_woocommerce_datepicker_disabled_dates', $this->dateRangesToArray($this->options->disabledDates($this->getId())), $this);
     }
 
-    public function enabledDates()
+    public function enabledDates() : Collection
     {
-        return $this->options->enabledDates($this->getId());
+        return apply_filters('otomaties_woocommerce_datepicker_enabled_dates', $this->dateRangesToArray($this->options->enabledDates($this->getId())), $this);
+    }
+
+    /**
+     * Convert an array of date ranges to an array of dates
+     *
+     * @param array<array<string, string>> $ranges Array of date ranges like [['from' => '20230832', 'to' => '20230832'], ['from' => '20230832', 'to' => '20230832']]
+     * @return Collection
+     */
+    public function dateRangesToArray(array $ranges) : Collection
+    {
+        $dates = [];
+        foreach ($ranges as $key => $range) {
+            if (!$range['from']) { // No date / invalid date
+                continue;
+            } elseif (!$range['to']) { // Single date
+                $dates[] = (new \DateTime($range['from']))->format('Y-m-d');
+                continue;
+            } else { // Date range
+                $from = new \DateTime($range['from']);
+                $to = new \DateTime($range['to']);
+                $to->modify('+1 day'); // To include the last day
+    
+                $range = new \DatePeriod($from, new \DateInterval('P1D'), $to);
+                foreach ($range as $date) {
+                    $dates[] = $date->format('Y-m-d');
+                }
+            }
+        }
+        return collect($dates);
     }
 
     public function minDate() : \DateTime
@@ -70,6 +100,18 @@ class Datepicker
         $timeZone = new \DateTimeZone(wp_timezone_string());
         $minDate = new \DateTime('now', $timeZone);
         return $minDate->modify('+' . $this->buffer() . ' hours');
+    }
+
+    public function maxDate() : \DateTime
+    {
+        $timeZone = new \DateTimeZone(wp_timezone_string());
+        $maxDate = new \DateTime('now', $timeZone);
+        return $maxDate->modify('+' . $this->daysToDisplay() . ' days');
+    }
+
+    public function daysToDisplay() : int
+    {
+        return $this->options->daysToDisplay($this->getId()) ?? 120;
     }
 
     /**
@@ -82,107 +124,133 @@ class Datepicker
         return $this->options->buffer($this->getId()) ?? 0;
     }
 
-    public function isDateInvalid(\DateTime|bool $date)
+    /**
+     * Test if certain day is disabled each week
+     *
+     * @param \DateTime $date
+     * @return boolean
+     */
+    public function isDayDisabled(\DateTime $date) : bool
+    {
+        return $this->disabledDays()->contains($date->format('w'));
+    }
+
+    /**
+     * Test if certain date is smaller than the min date
+     *
+     * @param \DateTime $date
+     * @return boolean
+     */
+    public function isDateEarlierThanMindate(\DateTime $date) : bool
+    {
+        return $date->format('Ymd') < $this->minDate()->format('Ymd');
+    }
+
+    /**
+     * Test if certain date is bigger than the min date
+     *
+     * @param \DateTime $date
+     * @return boolean
+     */
+    public function isDateLaterThanMaxdate(\DateTime $date) : bool
+    {
+        return $date->format('Ymd') > $this->maxDate()->format('Ymd');
+    }
+
+    /**
+     * Test if date is in disabled dates
+     *
+     * @param \DateTime $date
+     * @return boolean
+     */
+    public function isDateDisabled(\DateTime $date) : bool
+    {
+        return $this->disabledDates()->contains($date->format('Y-m-d'));
+    }
+
+    /**
+     * Test if date is in enabled dates
+     *
+     * @param \DateTime $date
+     * @return boolean
+     */
+    public function isDateEnabled(\DateTime $date) : bool
+    {
+        return $this->enabledDates()->contains($date->format('Y-m-d'));
+    }
+
+    /**
+     * Test if date is invalid. Return false if date is valid, return error message if date is invalid.
+     *
+     * @param \DateTime $date
+     * @return boolean
+     */
+    public function isDateInvalid(\DateTime $date)
     {
         if (! $date instanceof \DateTime) {
             return $this->missingDateMessage();
         }
 
-        foreach ($this->enabledDates() as $enabledPeriod) {
-            if ($this->dateIsInRange($date, $enabledPeriod['from'], $enabledPeriod['to'])) {
-                return false;
-            }
+        if ($this->isDateEnabled($date)) {
+            return false;
         }
 
         return app(Pipeline::class)
             ->send($date)
             ->through([
                 function ($date, $next) {
-                    if (in_array($date->format('w'), $this->disabledDays())) {
-                        return $this->invalidDateMessage();
-                    }
-                    return $next($date);
+                    return $this->isDateEarlierThanMindate($date) ? $this->invalidDateMessage() : $next($date);
                 },
                 function ($date, $next) {
-                    if ($date->format('Ymd') < $this->minDate()->format('Ymd')) {
-                        return $this->invalidDateMessage();
-                    }
-                    return $next($date);
+                    return $this->isDateLaterThanMaxdate($date) ? $this->invalidDateMessage() : $next($date);
                 },
                 function ($date, $next) {
-                    foreach ($this->disabledDates() as $disabledPeriod) {
-                        if ($this->dateIsInRange($date, $disabledPeriod['from'], $disabledPeriod['to'])) {
-                            return $this->invalidDateMessage();
-                        }
-                    }
-                    return $next($date);
+                    return $this->isDayDisabled($date) ? $this->invalidDateMessage() : $next($date);
                 },
                 function ($date, $next) {
-                    if ($invalidReason = apply_filters('otomaties_woocommerce_datepicker_is_date_invalid', false, $date, $this->getId())) {
-                        return $invalidReason;
-                    }
-                    return $next($date);
+                    return $this->isDateDisabled($date) ? $this->invalidDateMessage() : $next($date);
                 },
             ])
             ->then(function ($date) {
                 return false;
             });
     }
-
-    private function dateIsInRange($date, $from, $to)
-    {
-        if (( $to && $date->format('Ymd') >= $from && $date->format('Ymd') <= $to )
-            || ( ! $to && $date->format('Ymd') == $from )
-        ) {
-            return true;
-        }
-        return false;
-    }
-
-    public function enabledDatesFor($month, $year)
-    {
-        $days = collect(range(1, cal_days_in_month(CAL_GREGORIAN, $month, $year)));
-        $days = $days->map(function ($day) use ($month, $year) {
-            return new \DateTime($year . '-' . $month . '-' . $day);
-        });
-        $days = $days->filter(function ($day) {
-            return !$this->isDateInvalid($day);
-        });
-        $days = $days->map(function ($day) {
-            return $day->format('Y-m-d');
-        });
-        return $days->values()->toArray();
-    }
-
-    public function firstAvailableDate() {
-        // create a date range between minDate and mindate + 6 months
-        $minDate = $this->minDate();
-        $maxDate = clone $minDate;
-        $maxDate->modify('+6 months');
-        $interval = new \DateInterval('P1D');
-        $dateRange = new \DatePeriod($minDate, $interval, $maxDate);
-
-        // loop through the date range and return the first available date
-        foreach ($dateRange as $date) {
-            if (!$this->isDateInvalid($date)) {
-                return $date->format('Y-m-d');
-            }
-        }
-
-        return false;
-    }
     
     public function render($show = true)
     {
+        $disabledDays = $this->disabledDays()
+            ->unique()
+            ->values()
+            ->toArray();
+        
+        $disabledDates = $this->disabledDates()
+            ->diff($this->enabledDates())
+            ->filter(function ($date) {
+                $dateTime = \DateTime::createFromFormat('Y-m-d', $date);
+                return !$this->isDateEarlierThanMindate($dateTime) && !$this->isDateLaterThanMaxdate($dateTime);
+            })
+            ->unique()
+            ->values()
+            ->toArray();
+            
+        $enabledDates = $this->enabledDates()
+            ->filter(function ($date) {
+                $dateTime = \DateTime::createFromFormat('Y-m-d', $date);
+                return !$this->isDateEarlierThanMindate($dateTime) && !$this->isDateLaterThanMaxdate($dateTime);
+            })
+            ->unique()
+            ->values()
+            ->toArray();
+
         echo view('Otomaties\Woocommerce\Datepicker::datepicker', [
             'datepickerArgs' => json_encode([
                 'id' => $this->getId(),
                 'locale' => substr(get_locale(), 0, 2),
                 'minDate' => $this->minDate()->format('Y-m-d'),
-                'disabledDays' => $this->disabledDays(),
-                'disabledDates' => $this->disabledDates(),
-                'enabledDates' => $this->enabledDates(),
-                'firstAvailableDate' => $this->firstAvailableDate(),
+                'maxDate' => $this->maxDate() ? $this->maxDate()->format('Y-m-d') : null,
+                'disabledDays' => $disabledDays,
+                'disabledDates' => $disabledDates,
+                'enabledDates' => $enabledDates,
                 'selectedDate' => WC()->session->get('otomaties_woocommerce_datepicker_' . $this->getId() . '_date'),
             ]),
             'label' => $this->datepickerLabel(),

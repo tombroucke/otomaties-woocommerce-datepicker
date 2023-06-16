@@ -78,6 +78,11 @@ class Options
         return get_field('otomaties_wc_datepicker_' . $datepickerId . '_buffer', 'option');
     }
 
+    public function daysToDisplay(string $datepickerId)
+    {
+        return get_field('otomaties_wc_datepicker_' . $datepickerId . '_days_to_display', 'option');
+    }
+
     private function getDateRepeaterField(string $fieldName) {
         $repeater = [];
         $repeaterCount = get_option('options_' . $fieldName);
@@ -203,6 +208,11 @@ class Options
                             'label' => __('Buffer', 'otomaties-woocommerce-datepicker'),
                             'instructions' => __('The number of hours that should be added to the datepicker\'s min date', 'otomaties-woocommerce-datepicker'),
                             'default_value' => 0,
+                        ])
+                        ->addNumber('otomaties_wc_datepicker_' . $key . '_days_to_display', [
+                            'label' => __('Days to display', 'otomaties-woocommerce-datepicker'),
+                            'instructions' => __('The number of days that should be displayed in the datepicker', 'otomaties-woocommerce-datepicker'),
+                            'default_value' => 120,
                         ])
                         ->addSelect('otomaties_wc_datepicker_' . $key . '_disabled_days', [
                             'label' => __('Disabled days', 'otomaties-woocommerce-datepicker'),
