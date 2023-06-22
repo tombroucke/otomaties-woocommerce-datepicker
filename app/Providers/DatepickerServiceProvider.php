@@ -26,6 +26,7 @@ class DatepickerServiceProvider extends ServiceProvider
         $singletons = [
             'Otomaties\WooCommerce\Datepicker\Options',
             'Otomaties\WooCommerce\Datepicker\Frontend',
+            'Otomaties\WooCommerce\Datepicker\Admin',
             'Otomaties\WooCommerce\Datepicker\Checkout',
         ];
         foreach ($singletons as $singleton) {
@@ -94,6 +95,9 @@ class DatepickerServiceProvider extends ServiceProvider
         add_action('woocommerce_checkout_update_order_review', [$checkout, 'saveDateToSession']);
         add_action('woocommerce_before_checkout_process', [$checkout, 'updateSession']);
         add_action('woocommerce_checkout_order_processed', [$checkout, 'saveDatepickerDate'], 10, 3);
+
+        $admin = $this->app->make('Otomaties\WooCommerce\Datepicker\Admin');
+        add_action('woocommerce_admin_order_data_after_shipping_address', [$admin, 'addDateToOrderDetails']);
     }
 
     private function isWooCommerceActive() {
