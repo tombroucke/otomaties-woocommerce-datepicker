@@ -121,7 +121,7 @@ class Options
     public function cleanUpInactiveDatepickers()
     {
         $currentScreen = get_current_screen();
-        if (strpos($currentScreen->id, 'otomaties-woocommerce-datepicker-settings') == true) {
+        if ($currentScreen && strpos($currentScreen->id, 'otomaties-woocommerce-datepicker-settings') == true) {
 
             $activeDatepickers = collect($this->activeDatepickers())->keys();
             $activeDatepickerNames = $activeDatepickers
