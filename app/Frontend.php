@@ -63,7 +63,7 @@ class Frontend
             return $totalRows;
         }
 
-        $dateTime = \DateTime::createFromFormat('Y-m-d', $date, new \DateTimeZone(wp_timezone_string()));
+        $dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', $date . ' 12:00:00', new \DateTimeZone(wp_timezone_string()));
         $totalRows = collect($totalRows);
         $insertAfterKey = 'shipping';
         $newKey = 'otom_wc_datepicker_date';
