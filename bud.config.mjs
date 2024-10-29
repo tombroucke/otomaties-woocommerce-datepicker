@@ -31,13 +31,13 @@ export default async (app) => {
      */
     .watch(['resources/views/**/*', 'app/**/*'])
 
-    .setPath({'@certs' : '/Users/tombroucke/Library/ApplicationSupport/Local/run/router/nginx/certs'})
-    .proxy("https://atelierrosa.local")
+    .setPath({'@certs' : '/Users/tombroucke/Library/Application Support/Herd/config/valet/Certificates'})
+    .proxy("https://ma-donna.test")
     .serve({
-          host: "atelierrosa.local",
+          host: "ma-donna.test",
           ssl: true,
-          cert: app.path('@certs/atelierrosa.local.crt'),
-          key: app.path('@certs/atelierrosa.local.key'),
+          cert: app.path('@certs/ma-donna.test.crt'),
+          key: app.path('@certs/ma-donna.test.key'),
           port: 3000,
     })
 

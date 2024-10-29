@@ -14,12 +14,29 @@ class Checkout
             return;
         }
 
+        $chosenDate = $_POST['otomaties-woocommerce-datepicker--date'];
         $timeZone = new \DateTimeZone(wp_timezone_string());
-        $dateTime = \DateTime::createFromFormat('Y-m-d', $_POST['otomaties-woocommerce-datepicker--date'], $timeZone);
+        $dateTime = \DateTime::createFromFormat('Y-m-d', $chosenDate, $timeZone);
         $invalidReason = Datepicker::isDateInvalid($dateTime);
 
         if ($invalidReason) {
             $errors->add('validation', $invalidReason);
+        }
+
+        // Timeslot validation
+        $timeslotDate = $_POST['otomaties-woocommerce-datepicker--timeslot-date'] ?? null;
+        $timeslot = $_POST['otomaties-woocommerce-datepicker--timeslot'] ?? null;
+
+        if (! isset($timeslotDate)) {
+            return;
+        }
+
+        if (! $timeslot) {
+            $errors->add('validation', __('Please select a timeslot', 'otomaties-woocommerce-datepicker'));
+        }
+
+        if ($timeslot && $timeslotDate !== $chosenDate) {
+            $errors->add('validation', __('Invalid timeslot', 'otomaties-woocommerce-datepicker'));
         }
     }
 
@@ -51,6 +68,7 @@ class Checkout
     {
         $datepickerId = $_POST['otomaties-woocommerce-datepicker--id'] ?? null;
         $datepickerDate = $_POST['otomaties-woocommerce-datepicker--date'] ?? null;
+        $timeslot = $_POST['otomaties-woocommerce-datepicker--timeslot'] ?? null;
 
         if ($datepickerId) {
             $datepicker = new \Otomaties\WooCommerce\Datepicker\Datepicker($datepickerId, Options::instance());
@@ -60,6 +78,10 @@ class Checkout
 
         if ($datepickerDate) {
             $order->update_meta_data('otom_wc_datepicker_date', wc_clean(wp_unslash($datepickerDate)));
+        }
+
+        if ($timeslot) {
+            $order->update_meta_data('otom_wc_datepicker_timeslot', wc_clean(wp_unslash($timeslot)));
         }
 
         $order->save();

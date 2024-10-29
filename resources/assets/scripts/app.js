@@ -3,6 +3,10 @@ import flatpickr from "flatpickr";
 class Datepicker {
 	constructor(el) {
 		this.el = el;
+		this.id = el.dataset.id;
+		this.timepicker = document.querySelector('[name="otomaties-woocommerce-datepicker--timeslot"][data-datepicker-id="' + this.id + '"]');
+		this.timepickerDate = document.querySelector('[name="otomaties-woocommerce-datepicker--timeslot-date"][data-datepicker-id="' + this.id + '"]');
+		this.maybeAddEmptyTimeslotsOption();
 		this.bindEvents();
 	}
 
@@ -70,6 +74,30 @@ class Datepicker {
 						return datepicker.isDisabledPipeline(date);
 					}
 				],
+				onChange: function(selectedDates, dateStr, instance) {
+					if (!datepicker.timepicker) {
+						return;
+					}
+					const timeslotRestRoute = otomWcDatepicker.timeslotRestRoute;
+					const date = selectedDates[0];
+
+					fetch(timeslotRestRoute + '?date=' + datepicker.toISOString(date) + '&datepicker_id=' + datepicker.id, {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+							'X-WP-Nonce': otomWcDatepicker.nonce,
+						},
+					})
+					.then(response => response.json())
+					.then(data => {
+						const timeslotOptions = data.map(function(timeslot) {
+							return '<option value="' + timeslot + '">' + timeslot + '</option>';
+						});
+						datepicker.timepicker.innerHTML = timeslotOptions.join('');
+						datepicker.maybeAddEmptyTimeslotsOption();
+						datepicker.timepickerDate.value = datepicker.toISOString(date);
+					});
+				},
 				onReady: function(selectedDates, dateStr, instance) {
 					let changedMonth = 0;
 					while(!datepicker.monthHasEnabledDate(instance)) {
@@ -89,6 +117,16 @@ class Datepicker {
 				defaultDate: datepicker.options().selectedDate,
 			});	
 		});
+	}
+
+	maybeAddEmptyTimeslotsOption() {
+		if (!this.timepicker) {
+			return;
+		}
+		const timeslotOptions = this.timepicker.querySelectorAll('option');
+		if (timeslotOptions.length === 0) {
+			this.timepicker.innerHTML = '<option value="">' + otomWcDatepicker.noTimeslotsAvailable + '</option>';
+		}
 	}
 
 	monthHasEnabledDate(instance) {

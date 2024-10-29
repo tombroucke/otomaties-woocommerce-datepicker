@@ -4,20 +4,24 @@ namespace Otomaties\WooCommerce\Datepicker;
 
 class Admin
 {
-    public function addDateToOrderDetails($order) {
+    public function addDateToOrderDetails($order)
+    {
         $datepickerLabel = $order->get_meta('otom_wc_datepicker_label');
         $datepickerDate = $order->get_meta('otom_wc_datepicker_date');
-        
+        $timeslot = $order->get_meta('otom_wc_datepicker_timeslot');
+
         if ($datepickerDate === '') {
             return;
         }
+
         $datepickerLabel = $datepickerLabel === '' ? __('Datepicker', 'otomaties-woocommerce-datepicker') : $datepickerLabel;
-        
-        $datepickerDateTime = \DateTime::createFromFormat('Y-m-d', $datepickerDate);
+
+        $dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', $datepickerDate.' 12:00:00', new \DateTimeZone(wp_timezone_string()));
+        $formattedDate = date_i18n(get_option('date_format'), $dateTime->getTimestamp());
         printf(
-            '<p><strong>%s:</strong> %s</p>',
+            '<p><strong>%s:</strong><br>%s</p>',
             $datepickerLabel,
-            date_i18n(get_option('date_format'), $datepickerDateTime->getTimestamp())
+            $timeslot ? $formattedDate.'<br> '.$timeslot : $formattedDate
         );
     }
 }
