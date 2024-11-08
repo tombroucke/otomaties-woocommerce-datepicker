@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Otomaties WooCommerce Datepicker\n"
-"POT-Creation-Date: 2024-10-29 18:06+0100\n"
+"POT-Creation-Date: 2024-11-08 13:07+0100\n"
 "PO-Revision-Date: 2023-06-12 14:55+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -25,8 +25,70 @@ msgstr ""
 msgid "Select a date first"
 msgstr ""
 
-#: app/Admin.php:17 app/Options.php:123 app/Options.php:124
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/401.blade.php:3
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/401.blade.php:5
+msgid "Unauthorized"
+msgstr ""
+
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/403.blade.php:3
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/403.blade.php:5
+msgid "Forbidden"
+msgstr ""
+
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/404.blade.php:3
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/404.blade.php:5
+msgid "Not Found"
+msgstr ""
+
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/419.blade.php:3
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/419.blade.php:5
+msgid "Page Expired"
+msgstr ""
+
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/429.blade.php:3
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/429.blade.php:5
+msgid "Too Many Requests"
+msgstr ""
+
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/500.blade.php:3
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/500.blade.php:5
+msgid "Server Error"
+msgstr ""
+
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/503.blade.php:3
+#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/503.blade.php:5
+msgid "Service Unavailable"
+msgstr ""
+
+#: app/Admin.php:13 app/Admin.php:53 app/Options.php:123 app/Options.php:124
 msgid "Datepicker"
+msgstr ""
+
+#: app/Admin.php:20
+msgid "Timeslot"
+msgstr ""
+
+#: app/Admin.php:26
+msgid "Send notification"
+msgstr ""
+
+#: app/Admin.php:29
+msgid "Send a change notification email to the customer"
+msgstr ""
+
+#: app/Admin.php:89
+#, php-format
+msgid "%s has been changed"
+msgstr ""
+
+#: app/Admin.php:94
+#, php-format
+msgid "%s has been changed to %s at %s."
+msgstr ""
+
+#: app/Admin.php:102
+#, php-format
+msgid "%s has been changed to %s."
 msgstr ""
 
 #: app/Checkout.php:35
@@ -43,6 +105,24 @@ msgstr ""
 
 #: app/Datepicker.php:85
 msgid "Please select a valid delivery date."
+msgstr ""
+
+#: app/Emails/DatepickerChangedEmail.php:16
+msgid "Datepicker changed"
+msgstr ""
+
+#: app/Emails/DatepickerChangedEmail.php:17
+msgid ""
+"Datepicker changed notification emails are sent when a datepicker is "
+"changed."
+msgstr ""
+
+#: app/Emails/DatepickerChangedEmail.php:52
+msgid "Your order has been updated"
+msgstr ""
+
+#: app/Emails/DatepickerChangedEmail.php:64
+msgid "Date has changed"
 msgstr ""
 
 #: app/Frontend.php:18
@@ -249,6 +329,49 @@ msgstr ""
 
 #: app/RestApi.php:30
 msgid "Invalid date format"
+msgstr ""
+
+#: node_modules/meow/build/dependencies.js:465
+#, javascript-format
+msgid "Argument unexpected for: %s"
+msgstr ""
+
+#: node_modules/meow/build/dependencies.js:473
+#: node_modules/meow/build/dependencies.js:485
+#: node_modules/meow/build/dependencies.js:528
+#, javascript-format
+msgid "Not enough arguments following: %s"
+msgstr ""
+
+#: node_modules/meow/build/dependencies.js:648
+#, javascript-format
+msgid "Invalid JSON config file: %s"
+msgstr ""
+
+#: node_modules/meow/build/dependencies.js:937
+#, javascript-format
+msgid "Invalid configuration: %s, opts.count excludes opts.array."
+msgstr ""
+
+#: node_modules/meow/build/dependencies.js:941
+#, javascript-format
+msgid "Invalid configuration: %s, opts.count excludes opts.narg."
+msgstr ""
+
+#. translators: %s: Customer first name
+#: resources/views/woocommerce/emails/customer-datepicker-changed.php:27
+#: resources/views/woocommerce/emails/plain/customer-datepicker-changed.php:24
+#, php-format
+msgid "Hi %s,"
+msgstr ""
+
+#: resources/views/woocommerce/emails/customer-datepicker-changed.php:31
+#: resources/views/woocommerce/emails/plain/customer-datepicker-changed.php:32
+msgid "As a reminder, here are your order details:"
+msgstr ""
+
+#: vendor/roots/support/helpers.php:142
+msgid "WordPress &rsaquo; Error"
 msgstr ""
 
 #. Plugin Name of the plugin/theme

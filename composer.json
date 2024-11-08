@@ -20,5 +20,8 @@
           "Roots\\Acorn\\ComposerScripts::postAutoloadDump"
         ]
     },
-    "type": "wordpress-plugin"
+    "type": "wordpress-plugin",
+    "require-dev": {
+        "laravel/pint": "^1.18"
+    }
 }

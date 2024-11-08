@@ -36,7 +36,7 @@
           <option value="">{{ __('Select a date first', 'otomaties-woocommerce-datepicker') }}</option>
         @endif
         @foreach ($timeslots as $key => $timeslot)
-          <option value="{{ $key }}">{{ $timeslot }}</option>
+          <option value="{{ $timeslot }}">{{ $timeslot }}</option>
         @endforeach
       </select>
     @endif

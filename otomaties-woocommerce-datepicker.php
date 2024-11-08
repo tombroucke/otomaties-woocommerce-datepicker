@@ -14,19 +14,24 @@
 
 // If this file is called directly, abort.
 if (! defined('WPINC')) {
-    die;
+    exit;
 }
 
+if (! file_exists($composer = __DIR__.'/vendor/autoload.php')) {
+    return;
+}
+
+require_once $composer;
+
 add_action('after_setup_theme', function () {
-    if (file_exists($composer = __DIR__ . '/vendor/autoload.php')) {
-        require_once $composer;
+    if (! function_exists('Roots\bootloader')) {
+        return;
     }
 
-    if (function_exists('Roots\bootloader')) {
-        \Roots\bootloader()->boot(function (Roots\Acorn\Application $app) {
-            $app->register(
-                Otomaties\WooCommerce\Datepicker\Providers\DatepickerServiceProvider::class
-            );
-        });
-    }
+    \Roots\bootloader()->boot();
+    \Roots\bootloader()
+        ->getApplication()
+        ->register(
+            Otomaties\WooCommerce\Datepicker\Providers\DatepickerServiceProvider::class
+        );
 }, 20);

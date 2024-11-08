@@ -6,6 +6,8 @@
  * @see {@link https://bud.js.org/guides/getting-started/configure}
  * @param {import('@roots/bud').Bud} app
  */
+
+
 export default async (app) => {
   app
 	  .setPath('@src', 'resources/assets')
@@ -44,5 +46,5 @@ export default async (app) => {
     /**
      * URI of the `public` directory
      */
-    .setPublicPath('/app/plugins/otomaties-woocommerce-datepicker/public/');
+    .setPublicPath('/' + app.path().split('/').slice(-3).join('/') + '/public/');
 };

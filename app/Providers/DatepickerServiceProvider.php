@@ -102,9 +102,14 @@ class DatepickerServiceProvider extends ServiceProvider
 
         $admin = $this->app->make('Otomaties\WooCommerce\Datepicker\Admin');
         add_action('woocommerce_admin_order_data_after_shipping_address', [$admin, 'addDateToOrderDetails']);
+        add_action('woocommerce_admin_shipping_fields', [$admin, 'addDatepickerToShippingFields'], 10, 3);
+        add_action('woocommerce_process_shop_order_meta', [$admin, 'saveDatepickerShippingFields']);
+        add_filter('woocommerce_email_classes', [$admin, 'addDatepickerChangedEmail']);
+        add_filter('wc_get_template', [$admin, 'datepickerChangeEmailTemplate'], 10, 4);
 
         $restApi = $this->app->make('Otomaties\WooCommerce\Datepicker\RestApi');
         add_action('rest_api_init', [$restApi, 'addRoutes']);
+
     }
 
     private function isWooCommerceActive()
