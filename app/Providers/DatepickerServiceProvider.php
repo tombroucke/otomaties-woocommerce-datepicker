@@ -119,6 +119,6 @@ class DatepickerServiceProvider extends ServiceProvider
 
     private function isAcfActive()
     {
-        return class_exists('acf');
+        return class_exists('ACF');
     }
 }
