@@ -23,5 +23,12 @@
     "type": "wordpress-plugin",
     "require-dev": {
         "laravel/pint": "^1.18"
+    },
+    "extra": {
+      "acorn": {
+        "providers": [
+          "Otomaties\\WooCommerce\\Datepicker\\Providers\\DatepickerServiceProvider"
+        ]
+      }
     }
 }

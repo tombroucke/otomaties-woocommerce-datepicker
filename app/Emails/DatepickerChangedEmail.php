@@ -5,7 +5,7 @@ namespace Otomaties\WooCommerce\Datepicker\Emails;
 class DatepickerChangedEmail extends \WC_Email
 {
     public $content;
-    
+
     public $heading;
 
     public function __construct()
@@ -61,7 +61,7 @@ class DatepickerChangedEmail extends \WC_Email
      */
     public function get_default_heading()
     {
-        return $this->heading ? $this->heading : __('Date has changed', 'otomaties-woocommerce-datepicker');;
+        return $this->heading ? $this->heading : __('Date has changed', 'otomaties-woocommerce-datepicker');
     }
 
     /**
@@ -128,7 +128,7 @@ class DatepickerChangedEmail extends \WC_Email
             $content = $args['content'];
 
             $this->heading = $args['heading'];
-            
+
             if ($order_id) {
                 $this->object = wc_get_order($order_id);
 

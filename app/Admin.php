@@ -96,7 +96,7 @@ class Admin
                 date_i18n(get_option('date_format'), $newDateTime->getTimestamp()),
                 $newTimeslot
             );
-            
+
             if (! $newTimeslot) {
                 $content = sprintf(
                     __('%s has been changed to %s.', 'otomaties-woocommerce-datepicker'),
