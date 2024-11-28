@@ -10,6 +10,7 @@ class Frontend
 {
     public function enqueueScripts()
     {
+        ray(plugin_dir_url(__DIR__));
         if (is_cart() || is_checkout()) {
             bundle('otomaties-woocommerce-datepicker', 'otomaties-woocommerce-datepicker')
                 ->enqueue()
@@ -17,6 +18,7 @@ class Frontend
                     'timeslotRestRoute' => rest_url('otomaties-woocommerce-datepicker/v1/timeslots'),
                     'noTimeslotsAvailable' => __('No timeslots available', 'otomaties-woocommerce-datepicker'),
                     'nonce' => wp_create_nonce('wp_rest'),
+                    'publicPath' => plugin_dir_url(__DIR__).'public/',
                 ]);
         }
     }

@@ -1,5 +1,7 @@
 import flatpickr from "flatpickr";
 
+__webpack_public_path__ = window.otomWcDatepicker.publicPath;
+
 class Datepicker {
 	constructor(el) {
 		this.el = el;

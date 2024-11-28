@@ -46,5 +46,5 @@ export default async (app) => {
     /**
      * URI of the `public` directory
      */
-    .setPublicPath('/' + app.path().split('/').slice(-3).join('/') + '/public/');
+    .setPublicPath('/');
 };
