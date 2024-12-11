@@ -262,17 +262,19 @@ class Datepicker
 
         $selectedDate = WC()->session->get('otomaties_woocommerce_datepicker_'.$this->getId().'_date');
 
+        $datepickerArgs = apply_filters('otomaties_woocommerce_datepicker_datepicker_args', [
+            'id' => $this->getId(),
+            'locale' => substr(get_locale(), 0, 2),
+            'minDate' => $this->minDate()->format('Y-m-d'),
+            'maxDate' => $this->maxDate() ? $this->maxDate()->format('Y-m-d') : null,
+            'disabledDays' => $disabledDays,
+            'disabledDates' => $disabledDates,
+            'enabledDates' => $enabledDates,
+            'selectedDate' => $selectedDate,
+        ]);
+
         echo view('Otomaties\Woocommerce\Datepicker::datepicker', [
-            'datepickerArgs' => json_encode([
-                'id' => $this->getId(),
-                'locale' => substr(get_locale(), 0, 2),
-                'minDate' => $this->minDate()->format('Y-m-d'),
-                'maxDate' => $this->maxDate() ? $this->maxDate()->format('Y-m-d') : null,
-                'disabledDays' => $disabledDays,
-                'disabledDates' => $disabledDates,
-                'enabledDates' => $enabledDates,
-                'selectedDate' => $selectedDate,
-            ]),
+            'datepickerArgs' => json_encode($datepickerArgs),
             'selectedDate' => $selectedDate,
             'datepickerLabel' => $this->datepickerLabel(),
             'timeslotLabel' => $this->timeslotLabel(),
