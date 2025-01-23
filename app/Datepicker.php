@@ -47,16 +47,26 @@ class Datepicker
                     ->each(function ($day) use ($timeslot, $return, $date) {
                         if (strtolower($date->format('l')) === $day) {
                             foreach ($timeslot['slots'] as $slot) {
-                                $return->push($slot['time_from'].' - '.$slot['time_to']);
+                                $return->push([
+                                    'time_from' => $slot['time_from'],
+                                    'time_to' => $slot['time_to'],
+                                ]);
                             }
                         }
                     });
             });
 
         $return = $return
-            ->unique()
-            ->sort();
+            ->filter(function ($timeslot) use ($date) {
+                [$hours, $minutes] = explode(':', $timeslot['time_from']);
+                $dateTimeFrom = $date->setTime($hours, $minutes);
 
+                return $dateTimeFrom >= $this->minDate();
+            })
+            ->unique()
+            ->map(fn ($timeslot) => $timeslot['time_from'] . ' - ' . $timeslot['time_to'])
+            ->sort();
+            
         return apply_filters('otomaties_woocommerce_datepicker_timeslots', $return, $date);
     }
 
@@ -83,6 +93,11 @@ class Datepicker
     public function invalidDateMessage()
     {
         return $this->options->invalidDateMessage($this->getId()) ?? __('Please select a valid delivery date.', 'otomaties-woocommerce-datepicker');
+    }
+
+    public function invalidDateTimeMessage()
+    {
+        return $this->options->invalidDateTimeMessage($this->getId()) ?? __('Please select a valid delivery date and time.', 'otomaties-woocommerce-datepicker');
     }
 
     public function disabledDates(): Collection
@@ -153,7 +168,7 @@ class Datepicker
      */
     public function buffer()
     {
-        return $this->options->buffer($this->getId()) ?? 0;
+        return intval($this->options->buffer($this->getId()));
     }
 
     /**
@@ -170,6 +185,14 @@ class Datepicker
     public function isDateEarlierThanMindate(\DateTime $date): bool
     {
         return $date->format('Ymd') < $this->minDate()->format('Ymd');
+    }
+
+    /**
+     * Test if certain date with time is smaller than the min date with time
+     */
+    public function isDateTimeEarlierThanMindate(\DateTime $date): bool
+    {
+        return $date < $this->minDate();
     }
 
     /**
@@ -201,7 +224,7 @@ class Datepicker
      *
      * @return bool
      */
-    public function isDateInvalid(\DateTime|bool $date)
+    public function isDateInvalid(\DateTime|bool $date, string $time = null)
     {
         if (! $date instanceof \DateTime) {
             return $this->missingDateMessage();
@@ -214,7 +237,10 @@ class Datepicker
         return app(Pipeline::class)
             ->send($date)
             ->through([
-                function ($date, $next) {
+                function ($date, $next) use ($time) {
+                    if ($time) {
+                        return $this->isDateTimeEarlierThanMindate($date) ? $this->invalidDateTimeMessage() : $next($date);
+                    }
                     return $this->isDateEarlierThanMindate($date) ? $this->invalidDateMessage() : $next($date);
                 },
                 function ($date, $next) {

@@ -65,7 +65,7 @@ class Admin
     {
         $order = wc_get_order($orderid);
 
-        $sendEmail = isset($_POST['_shipping_otom_wc_datepicker_send_email']) ? sanitize_text_field($_POST['_shipping_otom_wc_datepicker_send_email']) : null;
+        $sendEmail = sanitize_text_field($_POST['_shipping_otom_wc_datepicker_send_email'] ?? 'no');
 
         $currentDate = $order->get_meta('otom_wc_datepicker_date');
         $currentTimeslot = $order->get_meta('otom_wc_datepicker_timeslot');

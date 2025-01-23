@@ -79,6 +79,11 @@ class Options
         return get_field('otomaties_wc_datepicker_'.$datepickerId.'_validation_incorrect', 'option');
     }
 
+    public function invalidDateTimeMessage(string $datepickerId)
+    {
+        return get_field('otomaties_wc_datepicker_'.$datepickerId.'_time_validation_incorrect', 'option');
+    }
+
     public function administrationLabel(string $datepickerId)
     {
         return get_field('otomaties_wc_datepicker_'.$datepickerId.'_administration_label', 'option');
@@ -215,6 +220,11 @@ class Options
                         'label' => __('Incorrect date error message', 'otomaties-woocommerce-datepicker'),
                         'instructions' => __('When a client provides an invalid date, this error message will be dipslayed.', 'otomaties-woocommerce-datepicker'),
                         'default_value' => sprintf(__('%s date is invalid', 'otomaties-woocommerce-datepicker'), $label),
+                    ])
+                    ->addText('otomaties_wc_datepicker_'.$key.'_time_validation_incorrect', [
+                        'label' => __('Incorrect date time error message', 'otomaties-woocommerce-datepicker'),
+                        'instructions' => __('When a client provides an invalid date and time, this error message will be dipslayed.', 'otomaties-woocommerce-datepicker'),
+                        'default_value' => sprintf(__('%s date and time are invalid', 'otomaties-woocommerce-datepicker'), $label),
                     ])
                     ->addNumber('otomaties_wc_datepicker_'.$key.'_buffer', [
                         'label' => __('Buffer', 'otomaties-woocommerce-datepicker'),
