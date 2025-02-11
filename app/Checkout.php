@@ -62,23 +62,31 @@ class Checkout
         parse_str($data, $postData);
         $date = sanitize_text_field($postData['otomaties-woocommerce-datepicker--date'] ?? null);
         $id = sanitize_text_field($postData['otomaties-woocommerce-datepicker--id'] ?? null);
-        $this->saveDatepickerDataToSession($date, $id);
+        $timeSlot = sanitize_text_field($postData['otomaties-woocommerce-datepicker--timeslot'] ?? null);
+        
+        $this->saveDatepickerDataToSession($date, $id, $timeSlot);
     }
 
     public function updateSession()
     {
         $date = sanitize_text_field($_POST['otomaties-woocommerce-datepicker--date'] ?? null);
         $id = sanitize_text_field($_POST['otomaties-woocommerce-datepicker--id'] ?? null);
-        $this->saveDatepickerDataToSession($date, $id);
+        $timeSlot = sanitize_text_field($_POST['otomaties-woocommerce-datepicker--timeslot'] ?? null);
+
+        $this->saveDatepickerDataToSession($date, $id, $timeSlot);
     }
 
-    private function saveDatepickerDataToSession($date = null, $id = null)
+    private function saveDatepickerDataToSession($date = null, $id, $timeSlot = null)
     {
         if (! $date || ! $id) {
             return;
         }
 
         WC()->session->set('otomaties_woocommerce_datepicker_'.$id.'_date', wc_clean(wp_unslash($date)));
+
+        if ($timeSlot) {
+            WC()->session->set('otomaties_woocommerce_datepicker_'.$id.'_timeslot', wc_clean(wp_unslash($timeSlot)));
+        }
     }
 
     public function saveDatepickerDate($orderId, $data, $order)

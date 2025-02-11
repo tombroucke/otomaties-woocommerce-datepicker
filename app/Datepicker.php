@@ -287,6 +287,7 @@ class Datepicker
             ->toArray();
 
         $selectedDate = WC()->session->get('otomaties_woocommerce_datepicker_'.$this->getId().'_date');
+        $selectedTimeslot = WC()->session->get('otomaties_woocommerce_datepicker_'.$this->getId().'_timeslot');
 
         $datepickerArgs = apply_filters('otomaties_woocommerce_datepicker_datepicker_args', [
             'id' => $this->getId(),
@@ -308,6 +309,7 @@ class Datepicker
             'id' => $this->getId(),
             'useTimeslots' => $this->options->timeslots($this->getId()),
             'timeslots' => $selectedDate ? $this->timeslots(\DateTime::createFromFormat('Y-m-d', $selectedDate)) : [],
+            'selectedTimeslot' => $selectedTimeslot,
         ]);
     }
 }
