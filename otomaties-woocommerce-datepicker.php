@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       Otomaties WooCommerce Datepicker
  * Description:       Add a datepicker on the checkout page
- * Version:           1.6.0
+ * Version:           1.6.1
  * Author:            Tom Broucke
  * Author URI:        https://tombroucke.be/
  * License:           GPL-2.0+
