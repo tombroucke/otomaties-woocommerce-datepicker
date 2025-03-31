@@ -1,34 +1,27 @@
 {
-    "name": "tombroucke/otomaties-woocommerce-datepicker",
-    "require": {
-        "roots/acorn": "*",
-        "stoutlogic/acf-builder": "^1.12"
-    },
-    "authors": [
-        {
-            "name": "Tom Broucke",
-            "email": "tom@tombroucke.be"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Otomaties\\WooCommerce\\Datepicker\\": "app/"
-        }
-    },
-    "scripts": {
-        "post-autoload-dump": [
-          "Roots\\Acorn\\ComposerScripts::postAutoloadDump"
-        ]
-    },
-    "type": "wordpress-plugin",
-    "require-dev": {
-        "laravel/pint": "^1.18"
-    },
-    "extra": {
-      "acorn": {
-        "providers": [
-          "Otomaties\\WooCommerce\\Datepicker\\Providers\\DatepickerServiceProvider"
-        ]
-      }
+  "name": "tombroucke/otomaties-woocommerce-datepicker",
+  "require": {
+    "roots/acorn": "*",
+    "stoutlogic/acf-builder": "^1.12"
+  },
+  "authors": [
+    {
+      "name": "Tom Broucke",
+      "email": "tom@tombroucke.be"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Otomaties\\WooCommerce\\Datepicker\\": "app/"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "Roots\\Acorn\\ComposerScripts::postAutoloadDump"
+    ]
+  },
+  "type": "wordpress-plugin",
+  "require-dev": {
+    "laravel/pint": "^1.18"
+  }
 }

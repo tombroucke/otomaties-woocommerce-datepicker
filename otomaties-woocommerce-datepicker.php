@@ -1,5 +1,7 @@
 <?php
 
+use Roots\Acorn\Application;
+
 /**
  * Plugin Name:       Otomaties WooCommerce Datepicker
  * Description:       Add a datepicker on the checkout page
@@ -17,21 +19,25 @@ if (! defined('WPINC')) {
     exit;
 }
 
-if (! file_exists($composer = __DIR__.'/vendor/autoload.php')) {
-    return;
+if (file_exists($composer = __DIR__.'/vendor/autoload.php')) {
+    require_once $composer;
 }
 
-require_once $composer;
-
 add_action('after_setup_theme', function () {
-    if (! function_exists('Roots\bootloader')) {
-        return;
+    if (! class_exists(\Roots\Acorn\Application::class)) {
+        wp_die(
+            __('You need to install Acorn to use this site.', 'domain'),
+            '',
+            [
+                'link_url' => 'https://roots.io/acorn/docs/installation/',
+                'link_text' => __('Acorn Docs: Installation', 'domain'),
+            ]
+        );
     }
 
-    \Roots\bootloader()->boot();
-    \Roots\bootloader()
-        ->getApplication()
-        ->register(
-            Otomaties\WooCommerce\Datepicker\Providers\DatepickerServiceProvider::class
-        );
+    Application::configure()
+        ->withProviders([
+            Otomaties\WooCommerce\Datepicker\Providers\DatepickerServiceProvider::class,
+        ])
+        ->boot();
 }, 20);
