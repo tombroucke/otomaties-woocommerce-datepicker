@@ -19,9 +19,11 @@ if (! defined('WPINC')) {
     exit;
 }
 
-if (file_exists($composer = __DIR__.'/vendor/autoload.php')) {
-    require_once $composer;
+if (! file_exists($composer = __DIR__.'/vendor/autoload.php')) {
+    return;
 }
+
+require_once $composer;
 
 add_action('after_setup_theme', function () {
     if (! class_exists(\Roots\Acorn\Application::class)) {
@@ -35,9 +37,13 @@ add_action('after_setup_theme', function () {
         );
     }
 
-    Application::configure()
-        ->withProviders([
-            Otomaties\WooCommerce\Datepicker\Providers\DatepickerServiceProvider::class,
-        ])
-        ->boot();
+    if (function_exists('app')) {
+        app()->register(Otomaties\WooCommerce\Datepicker\Providers\DatepickerServiceProvider::class);
+    } else {
+        Application::configure()
+            ->withProviders([
+                Otomaties\WooCommerce\Datepicker\Providers\DatepickerServiceProvider::class,
+            ])
+            ->boot();
+    }
 }, 20);
