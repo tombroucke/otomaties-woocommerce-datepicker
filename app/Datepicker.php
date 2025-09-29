@@ -64,9 +64,9 @@ class Datepicker
                 return $dateTimeFrom >= $this->minDate();
             })
             ->unique()
-            ->map(fn ($timeslot) => $timeslot['time_from'] . ' - ' . $timeslot['time_to'])
+            ->map(fn ($timeslot) => $timeslot['time_from'].' - '.$timeslot['time_to'])
             ->sort();
-            
+
         return apply_filters('otomaties_woocommerce_datepicker_timeslots', $return, $date);
     }
 
@@ -224,7 +224,7 @@ class Datepicker
      *
      * @return bool
      */
-    public function isDateInvalid(\DateTime|bool $date, string $time = null)
+    public function isDateInvalid(\DateTime|bool $date, ?string $time = null)
     {
         if (! $date instanceof \DateTime) {
             return $this->missingDateMessage();
@@ -241,6 +241,7 @@ class Datepicker
                     if ($time) {
                         return $this->isDateTimeEarlierThanMindate($date) ? $this->invalidDateTimeMessage() : $next($date);
                     }
+
                     return $this->isDateEarlierThanMindate($date) ? $this->invalidDateMessage() : $next($date);
                 },
                 function ($date, $next) {

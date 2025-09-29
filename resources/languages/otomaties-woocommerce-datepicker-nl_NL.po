@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Otomaties WooCommerce Datepicker\n"
-"POT-Creation-Date: 2024-11-08 13:07+0100\n"
-"PO-Revision-Date: 2024-11-08 13:11+0100\n"
+"POT-Creation-Date: 2025-09-29 09:33+0200\n"
+"PO-Revision-Date: 2025-09-29 09:35+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -10,14 +10,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.7\n"
 "X-Poedit-Basepath: ../..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: otomaties-woocommerce-datepicker.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
@@ -25,42 +24,7 @@ msgstr ""
 msgid "Select a date first"
 msgstr "Selecteer eerst een datum"
 
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/401.blade.php:3
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/401.blade.php:5
-msgid "Unauthorized"
-msgstr ""
-
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/403.blade.php:3
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/403.blade.php:5
-msgid "Forbidden"
-msgstr ""
-
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/404.blade.php:3
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/404.blade.php:5
-msgid "Not Found"
-msgstr ""
-
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/419.blade.php:3
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/419.blade.php:5
-msgid "Page Expired"
-msgstr ""
-
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/429.blade.php:3
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/429.blade.php:5
-msgid "Too Many Requests"
-msgstr ""
-
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/500.blade.php:3
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/500.blade.php:5
-msgid "Server Error"
-msgstr ""
-
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/503.blade.php:3
-#: vendor/roots/acorn/src/Illuminate/Foundation/Exceptions/views/503.blade.php:5
-msgid "Service Unavailable"
-msgstr ""
-
-#: app/Admin.php:13 app/Admin.php:53 app/Options.php:123 app/Options.php:124
+#: app/Admin.php:13 app/Admin.php:53 app/Options.php:128 app/Options.php:129
 msgid "Datepicker"
 msgstr "Datumkiezer"
 
@@ -91,21 +55,33 @@ msgstr "%s werd aangepast naar %s om %s."
 msgid "%s has been changed to %s."
 msgstr "%s werd aangepast naar %s."
 
-#: app/Checkout.php:35
+#: app/Checkout.php:24
+msgid "Please select a valid date."
+msgstr "Selecteer een geldige datum."
+
+#: app/Checkout.php:52
 msgid "Please select a timeslot"
 msgstr "Selecteer een tijdslot"
 
-#: app/Checkout.php:39
+#: app/Checkout.php:56
 msgid "Invalid timeslot"
 msgstr "Ongeldig tijdslot"
 
-#: app/Datepicker.php:80
+#: app/Checkout.php:62
+msgid "Invalid datepicker"
+msgstr "Ongeldige datumprikker"
+
+#: app/Datepicker.php:90
 msgid "Please select a delivery date."
 msgstr "Selecteer een leverdatum."
 
-#: app/Datepicker.php:85
+#: app/Datepicker.php:95
 msgid "Please select a valid delivery date."
 msgstr "Selecteer a.u.b. een geldige leverdatum."
+
+#: app/Datepicker.php:100
+msgid "Please select a valid delivery date and time."
+msgstr "Selecteer een geldige datum en -tijd."
 
 #: app/Emails/DatepickerChangedEmail.php:16
 msgid "Datepicker changed"
@@ -128,40 +104,40 @@ msgstr "Datum is aangepast"
 msgid "No timeslots available"
 msgstr "Geen tijdsloten beschikbaar"
 
-#: app/Frontend.php:84
+#: app/Frontend.php:85
 msgid "Delivery/pickup date"
 msgstr "Levering / Ophaaldatum"
 
-#: app/Options.php:161 app/Options.php:166
+#: app/Options.php:166 app/Options.php:171
 msgid "Datepickers"
 msgstr "Datumprikkers"
 
-#: app/Options.php:168
+#: app/Options.php:173
 msgid "Add datepicker"
 msgstr "Datumprikker toevoegen"
 
-#: app/Options.php:171
+#: app/Options.php:176
 msgid "Label"
 msgstr "Label"
 
-#: app/Options.php:172
+#: app/Options.php:177
 msgid "For admin eyes only. This will not be displayed to clients."
 msgstr ""
 "Alleen zichtbaar voor beheerders. Dit wordt niet weergegeven aan klanten."
 
-#: app/Options.php:180
+#: app/Options.php:185
 msgid "Datepickers details"
 msgstr "Details datumprikkers"
 
-#: app/Options.php:193
+#: app/Options.php:198
 msgid "Shipping method"
 msgstr "Verzendmethode"
 
-#: app/Options.php:200
+#: app/Options.php:205
 msgid "Administration label"
 msgstr "Administratie label"
 
-#: app/Options.php:201
+#: app/Options.php:206
 msgid ""
 "This will displayed in on the thankyou-page, e-mails and in the WooCommere "
 "backend"
@@ -169,164 +145,181 @@ msgstr ""
 "Dit wordt weergegeven op de bedanktpagina, in e-mails en in de WooCommere "
 "backend"
 
-#: app/Options.php:202
+#: app/Options.php:207
 #, php-format
 msgid "%s date"
 msgstr "%s datum"
 
-#: app/Options.php:205
+#: app/Options.php:210
 msgid "Datepicker label"
 msgstr "Datumprikker label"
 
-#: app/Options.php:206
+#: app/Options.php:211
 msgid "This will displayed right above the datepicker"
 msgstr "Dit wordt net boven de datumprikker weergegeven"
 
-#: app/Options.php:207
+#: app/Options.php:212
 #, php-format
 msgid "Choose a %s date"
 msgstr "Kies een %s datum"
 
-#: app/Options.php:210
+#: app/Options.php:215
 msgid "Missing date error message"
 msgstr "Foutmelding ontbrekende datum"
 
-#: app/Options.php:211
+#: app/Options.php:216
 msgid ""
 "When a client doesn't provide a date, this error message will be dipslayed."
 msgstr "Als een klant geen datum opgeeft, wordt deze foutmelding weergegeven."
 
-#: app/Options.php:212
+#: app/Options.php:217
 #, php-format
 msgid "%s date is missing"
 msgstr "%s datum ontbreekt"
 
-#: app/Options.php:215
+#: app/Options.php:220
 msgid "Incorrect date error message"
 msgstr "Foutmelding onjuiste datum"
 
-#: app/Options.php:216
+#: app/Options.php:221
 msgid ""
 "When a client provides an invalid date, this error message will be dipslayed."
 msgstr ""
 "Als een klant een ongeldige datum opgeeft, wordt deze foutmelding "
 "weergegeven."
 
-#: app/Options.php:217
+#: app/Options.php:222
 #, php-format
 msgid "%s date is invalid"
 msgstr "%s datum is ongeldig"
 
-#: app/Options.php:220
+#: app/Options.php:225
+msgid "Incorrect date time error message"
+msgstr "Foutmelding onjuiste datum en tijd"
+
+#: app/Options.php:226
+msgid ""
+"When a client provides an invalid date and time, this error message will be "
+"dipslayed."
+msgstr ""
+"Als een klant een ongeldige datum en tijd opgeeft, wordt deze foutmelding "
+"getoond."
+
+#: app/Options.php:227
+#, php-format
+msgid "%s date and time are invalid"
+msgstr "%s datum en tijd zijn ongeldig"
+
+#: app/Options.php:230
 msgid "Buffer"
 msgstr "Buffer"
 
-#: app/Options.php:221
+#: app/Options.php:231
 msgid "The number of hours that should be added to the datepicker's min date"
 msgstr ""
 "Het aantal uren dat moet worden toegevoegd aan de min. datum van de "
 "datepicker"
 
-#: app/Options.php:225
+#: app/Options.php:235
 msgid "Days to display"
 msgstr "Aantal dagen om weer te geven"
 
-#: app/Options.php:226
+#: app/Options.php:236
 msgid "The number of days that should be displayed in the datepicker"
 msgstr ""
 "Het aantal dagen dat moet worden toegevoegd aan de min. datum van de "
 "datepicker"
 
-#: app/Options.php:230
+#: app/Options.php:240
 msgid "Disabled days"
 msgstr "Uitgeschakelde dagen"
 
-#: app/Options.php:234 app/Options.php:290
+#: app/Options.php:244 app/Options.php:300
 msgid "Monday"
 msgstr "Maandag"
 
-#: app/Options.php:235 app/Options.php:291
+#: app/Options.php:245 app/Options.php:301
 msgid "Tuesday"
 msgstr "Dinsdag"
 
-#: app/Options.php:236 app/Options.php:292
+#: app/Options.php:246 app/Options.php:302
 msgid "Wednesday"
 msgstr "Woensdag"
 
-#: app/Options.php:237 app/Options.php:293
+#: app/Options.php:247 app/Options.php:303
 msgid "Thursday"
 msgstr "Donderdag"
 
-#: app/Options.php:238 app/Options.php:294
+#: app/Options.php:248 app/Options.php:304
 msgid "Friday"
 msgstr "Vrijdag"
 
-#: app/Options.php:239 app/Options.php:295
+#: app/Options.php:249 app/Options.php:305
 msgid "Saturday"
 msgstr "Zaterdag"
 
-#: app/Options.php:240 app/Options.php:296
+#: app/Options.php:250 app/Options.php:306
 msgid "Sunday"
 msgstr "Zondag"
 
-#: app/Options.php:244
+#: app/Options.php:254
 msgid "Disabled dates"
 msgstr "Uitgeschakelde data"
 
-#: app/Options.php:246 app/Options.php:263
+#: app/Options.php:256 app/Options.php:273
 msgid "Add date"
 msgstr "Datum toevoegen"
 
-#: app/Options.php:249 app/Options.php:266
+#: app/Options.php:259 app/Options.php:276
 msgid "Date from"
 msgstr "Datum vanaf"
 
-#: app/Options.php:254 app/Options.php:271
+#: app/Options.php:264 app/Options.php:281
 msgid "Date to"
 msgstr "Datum tot"
 
-#: app/Options.php:256 app/Options.php:273
+#: app/Options.php:266 app/Options.php:283
 msgid "Leave empty if you want to disable only one date"
 msgstr "Leeg laten als je slechts één datum wilt uitschakelen"
 
-#: app/Options.php:261
+#: app/Options.php:271
 msgid "Enabled dates"
 msgstr "Ingeschakelde data"
 
-#: app/Options.php:278
+#: app/Options.php:288
 msgid "Timeslot label"
 msgstr "Label timeslot"
 
-#: app/Options.php:279
+#: app/Options.php:289
 msgid "This will be displayed right above the timeslot picker"
 msgstr "Dit wordt net boven het tijdslot weergegeven"
 
-#: app/Options.php:280
+#: app/Options.php:290
 #, php-format
 msgid "Choose a %s timeslot"
 msgstr "Kies een %s tijdslot"
 
-#: app/Options.php:283
+#: app/Options.php:293
 msgid "Timeslots"
 msgstr "Tijdsintervallen"
 
-#: app/Options.php:285
+#: app/Options.php:295
 msgid "Add timeslot"
 msgstr "Tijdslot toevoegen"
 
-#: app/Options.php:288
+#: app/Options.php:298
 msgid "Days"
 msgstr "Dagen"
 
-#: app/Options.php:301
+#: app/Options.php:311
 msgid "Slots"
 msgstr "Sloten"
 
-#: app/Options.php:304
+#: app/Options.php:314
 msgid "Time from"
 msgstr "Tijd vanaf"
 
-#: app/Options.php:310
+#: app/Options.php:320
 msgid "Time to"
 msgstr "Tijd tot"
 
@@ -335,51 +328,28 @@ msgid "Missing required parameters"
 msgstr "Benodigde velden ontbreken"
 
 #: app/RestApi.php:30
-msgid "Invalid date format"
-msgstr "Ongeldig datumformaat"
+msgid "Invalid date format. Expected format: Y-m-d"
+msgstr "Ongeldig datumformaat. Verwacht formaat: Y-m-d"
 
-#: node_modules/meow/build/dependencies.js:465
-#, javascript-format
-msgid "Argument unexpected for: %s"
-msgstr ""
+#: otomaties-woocommerce-datepicker.php:29
+msgid "You need to install Acorn to use this site."
+msgstr "Je moet Acorn installeren om deze site te kunnen gebruiken."
 
-#: node_modules/meow/build/dependencies.js:473
-#: node_modules/meow/build/dependencies.js:485
-#: node_modules/meow/build/dependencies.js:528
-#, javascript-format
-msgid "Not enough arguments following: %s"
-msgstr ""
-
-#: node_modules/meow/build/dependencies.js:648
-#, javascript-format
-msgid "Invalid JSON config file: %s"
-msgstr ""
-
-#: node_modules/meow/build/dependencies.js:937
-#, javascript-format
-msgid "Invalid configuration: %s, opts.count excludes opts.array."
-msgstr ""
-
-#: node_modules/meow/build/dependencies.js:941
-#, javascript-format
-msgid "Invalid configuration: %s, opts.count excludes opts.narg."
-msgstr ""
+#: otomaties-woocommerce-datepicker.php:33
+msgid "Acorn Docs: Installation"
+msgstr "Acorn Docs: Installatie"
 
 #. translators: %s: Customer first name
 #: resources/views/woocommerce/emails/customer-datepicker-changed.php:27
-#: resources/views/woocommerce/emails/plain/customer-datepicker-changed.php:24
+#: resources/views/woocommerce/emails/plain/customer-datepicker-changed.php:25
 #, php-format
 msgid "Hi %s,"
 msgstr "Beste %s,"
 
 #: resources/views/woocommerce/emails/customer-datepicker-changed.php:31
-#: resources/views/woocommerce/emails/plain/customer-datepicker-changed.php:32
+#: resources/views/woocommerce/emails/plain/customer-datepicker-changed.php:33
 msgid "As a reminder, here are your order details:"
-msgstr ""
-
-#: vendor/roots/support/helpers.php:142
-msgid "WordPress &rsaquo; Error"
-msgstr ""
+msgstr "Ter herinnering, dit zijn de details van uw bestelling:"
 
 #. Plugin Name of the plugin/theme
 msgid "Otomaties WooCommerce Datepicker"

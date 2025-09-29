@@ -10,7 +10,7 @@ class Checkout
 {
     public function validate($fields, $errors)
     {
-        if (!isset($_POST['otomaties-woocommerce-datepicker--date'])) {
+        if (! isset($_POST['otomaties-woocommerce-datepicker--date'])) {
             return;
         }
 
@@ -19,6 +19,12 @@ class Checkout
 
         $timeZone = new \DateTimeZone(wp_timezone_string());
         $dateTime = \DateTime::createFromFormat('Y-m-d', $chosenDate, $timeZone);
+
+        if (! $dateTime) {
+            $errors->add('validation', __('Please select a valid date.', 'otomaties-woocommerce-datepicker'));
+
+            return;
+        }
 
         if ($chosenTime) {
             $timeFrom = explode(' - ', $chosenTime)[0];
@@ -38,7 +44,7 @@ class Checkout
         $timeslotDate = sanitize_text_field($_POST['otomaties-woocommerce-datepicker--timeslot-date'] ?? null);
         $timeslot = sanitize_text_field($_POST['otomaties-woocommerce-datepicker--timeslot'] ?? null);
 
-        if (!isset($_POST['otomaties-woocommerce-datepicker--timeslot-date'])) {
+        if (! isset($_POST['otomaties-woocommerce-datepicker--timeslot-date'])) {
             return;
         }
 
@@ -63,7 +69,7 @@ class Checkout
         $date = sanitize_text_field($postData['otomaties-woocommerce-datepicker--date'] ?? null);
         $id = sanitize_text_field($postData['otomaties-woocommerce-datepicker--id'] ?? null);
         $timeSlot = sanitize_text_field($postData['otomaties-woocommerce-datepicker--timeslot'] ?? null);
-        
+
         $this->saveDatepickerDataToSession($date, $id, $timeSlot);
     }
 
@@ -76,7 +82,7 @@ class Checkout
         $this->saveDatepickerDataToSession($date, $id, $timeSlot);
     }
 
-    private function saveDatepickerDataToSession($date = null, $id, $timeSlot = null)
+    private function saveDatepickerDataToSession($date, $id, $timeSlot = null)
     {
         if (! $date || ! $id) {
             return;
