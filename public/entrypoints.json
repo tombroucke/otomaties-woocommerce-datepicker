@@ -1,11 +1,11 @@
 {
   "otomaties-woocommerce-datepicker": {
     "js": [
-      "js/runtime.7b6178.js",
-      "js/otomaties-woocommerce-datepicker.1c3f80.js"
+      "js/runtime.95cb0d.js",
+      "js/otomaties-woocommerce-datepicker.4f03fb.js"
     ],
     "css": [
-      "css/otomaties-woocommerce-datepicker.d8a638.css"
+      "css/otomaties-woocommerce-datepicker.85e3b0.css"
     ],
     "dependencies": []
   }

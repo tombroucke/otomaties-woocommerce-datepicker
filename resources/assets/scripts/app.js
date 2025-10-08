@@ -83,6 +83,9 @@ class Datepicker {
 					const timeslotRestRoute = otomWcDatepicker.timeslotRestRoute;
 					const date = selectedDates[0];
 
+					datepicker.timepicker.classList.add('opacity-50');
+					datepicker.timepicker.disabled = true;
+
 					fetch(timeslotRestRoute + '?date=' + datepicker.toISOString(date) + '&datepicker_id=' + datepicker.id, {
 						method: 'GET',
 						headers: {
@@ -98,6 +101,15 @@ class Datepicker {
 						datepicker.timepicker.innerHTML = timeslotOptions.join('');
 						datepicker.maybeAddEmptyTimeslotsOption();
 						datepicker.timepickerDate.value = datepicker.toISOString(date);
+						datepicker.timepicker.classList.remove('opacity-50');
+						datepicker.timepicker.disabled = false;
+					})
+					.catch(error => {
+						console.error('Error fetching timeslots:', error);
+						// Restore timepicker to its previous state
+						datepicker.maybeAddEmptyTimeslotsOption();
+						datepicker.timepicker.classList.remove('opacity-50');
+						datepicker.timepicker.disabled = false;
 					});
 				},
 				onReady: function(selectedDates, dateStr, instance) {
